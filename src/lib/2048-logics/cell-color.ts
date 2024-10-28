@@ -1,3 +1,5 @@
+export const TEXT_COLOR = '#5C534A';
+
 export const getCellColor = (value: number): string => {
 	switch (value) {
 		case 0:

@@ -3,9 +3,12 @@
 	import { onKeyPress } from '$lib/2048-logics/on-key-press';
 	import { paint } from '$lib/2048-logics/paint';
 	import { addRandomValue } from '$lib/2048-logics/random-value';
-	let grid = $state(addRandomValue(GRID_BASE));
 
+	let grid = $state(addRandomValue(GRID_BASE));
 	let canvas: HTMLCanvasElement;
+
+	let isGameOver = $state(false);
+	let isGameWon = $state(false);
 
 	$effect(() => {
 		window.addEventListener('keydown', (event) => {
@@ -19,7 +22,10 @@
 
 		const { CELL_SIZE, GAP_SIZE } = getCellAndGapSize(canvas.width);
 
-		paint({ context, grid, CELL_SIZE, GAP_SIZE });
+		const result = paint({ context, grid, CELL_SIZE, GAP_SIZE });
+
+		isGameOver = result.isGameOver;
+		isGameWon = result.isGameWon;
 	});
 </script>
 
@@ -29,3 +35,15 @@
 	width={MAX_CANVAS_SIZE}
 	height={MAX_CANVAS_SIZE}
 ></canvas>
+
+{#if isGameOver}
+	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
+		<h1 class="text-4xl text-white">Game Over</h1>
+	</div>
+{/if}
+
+{#if isGameWon}
+	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
+		<h1 class="text-4xl text-white">Game Won</h1>
+	</div>
+{/if}
