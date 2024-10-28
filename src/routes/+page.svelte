@@ -43,12 +43,7 @@
 	});
 </script>
 
-<canvas
-	class=" border-[16px] border-gray-300"
-	bind:this={canvas}
-	width={MAX_CANVAS_SIZE}
-	height={MAX_CANVAS_SIZE}
-></canvas>
+<canvas bind:this={canvas} width={MAX_CANVAS_SIZE} height={MAX_CANVAS_SIZE}></canvas>
 
 <div class="text-4xl">Score: {score}</div>
 <button onclick={resetGame} class="mt-4 rounded bg-blue-500 p-2 text-white">Reset</button>

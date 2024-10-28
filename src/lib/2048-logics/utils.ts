@@ -52,3 +52,8 @@ export const getRowsFromGrid = (grid: Grid): Cell[][] => {
 		[[]] as Cell[][]
 	);
 };
+
+export const getCharacterSize = (value: number) => {
+	const textSize = value.toString().split('').length;
+	return textSize;
+};
