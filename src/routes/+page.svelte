@@ -15,6 +15,13 @@
 	let isGameOver = $state(false);
 	let isGameWon = $state(false);
 
+	const resetGame = () => {
+		grid = addRandomValue(GRID_BASE);
+		score = 0;
+		isGameOver = false;
+		isGameWon = false;
+	};
+
 	$effect(() => {
 		window.addEventListener('keyup', (event) => {
 			const result = onKeyPress({ event, grid, score });
@@ -44,6 +51,7 @@
 ></canvas>
 
 <div class="text-4xl">Score: {score}</div>
+<button onclick={resetGame} class="mt-4 rounded bg-blue-500 p-2 text-white">Reset</button>
 
 {#if isGameOver}
 	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
