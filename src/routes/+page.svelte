@@ -16,7 +16,7 @@
 	let isGameWon = $state(false);
 
 	const resetGame = () => {
-		grid = addRandomValue(GRID_BASE);
+		grid = addRandomValue(GRID_BASE.map((cell) => ({ ...cell, value: 0 })));
 		score = 0;
 		isGameOver = false;
 		isGameWon = false;
