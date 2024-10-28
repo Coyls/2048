@@ -42,3 +42,13 @@ export const getNextCell = (cell: Cell, direction: DirectionType): Cell => {
 			return cell;
 	}
 };
+
+export const getRowsFromGrid = (grid: Grid): Cell[][] => {
+	return grid.reduce(
+		(acc, cell) => {
+			acc[cell.row].push(cell);
+			return acc;
+		},
+		[[]] as Cell[][]
+	);
+};

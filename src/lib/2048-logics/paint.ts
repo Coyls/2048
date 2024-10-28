@@ -1,8 +1,6 @@
 import { GRID_COLS_LENGTH, GRID_ROWS_LENGTH, type Grid } from './base';
 import { getCellColor, TEXT_COLOR } from './cell-color';
 
-const WIN_CONDITION = 2048;
-
 export const paint = ({
 	context,
 	CELL_SIZE,
@@ -16,9 +14,6 @@ export const paint = ({
 }) => {
 	const rows = GRID_ROWS_LENGTH;
 	const cols = GRID_COLS_LENGTH;
-
-	const isGameOver = false;
-	let isGameWon = false;
 
 	for (let i = 0; i < rows; i++) {
 		for (let j = 0; j < cols; j++) {
@@ -40,7 +35,6 @@ export const paint = ({
 				y + CELL_SIZE / 2
 			);
 
-			if (cell.value === WIN_CONDITION) isGameWon = true;
 			// if (isEmptyCell) isGameOver = true;
 
 			// --- DEBUG ---
@@ -53,5 +47,5 @@ export const paint = ({
 		}
 	}
 
-	return { isGameOver, isGameWon };
+	return {};
 };

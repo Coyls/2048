@@ -1,5 +1,9 @@
 <script lang="ts">
 	import { getCellAndGapSize, GRID_BASE, MAX_CANVAS_SIZE } from '$lib/2048-logics/base';
+	import {
+		calculateIfGameIsOver,
+		calculateIfGameIsWon
+	} from '$lib/2048-logics/calculate-game-over';
 	import { onKeyPress } from '$lib/2048-logics/on-key-press';
 	import { paint } from '$lib/2048-logics/paint';
 	import { addRandomValue } from '$lib/2048-logics/random-value';
@@ -12,10 +16,13 @@
 	let isGameWon = $state(false);
 
 	$effect(() => {
-		window.addEventListener('keydown', (event) => {
+		window.addEventListener('keyup', (event) => {
 			const result = onKeyPress({ event, grid, score });
 			grid = result.grid;
 			score = result.score;
+
+			isGameOver = calculateIfGameIsOver(grid);
+			isGameWon = calculateIfGameIsWon(grid);
 		});
 	});
 
@@ -25,10 +32,7 @@
 
 		const { CELL_SIZE, GAP_SIZE } = getCellAndGapSize(canvas.width);
 
-		const result = paint({ context, grid, CELL_SIZE, GAP_SIZE });
-
-		isGameOver = result.isGameOver;
-		isGameWon = result.isGameWon;
+		paint({ context, grid, CELL_SIZE, GAP_SIZE });
 	});
 </script>
 
