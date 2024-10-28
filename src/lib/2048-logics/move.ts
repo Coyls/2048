@@ -2,7 +2,7 @@ import { areSameGrids } from './are-same-grids';
 import { type Cell, type Grid, GRID_COLS_LENGTH, MAX_COL_INDEX, MAX_ROW_INDEX } from './base';
 import { colide } from './collision';
 import { addRandomValue } from './random-value';
-import type { DirectionType } from './utils';
+import { cleanCollidedCells, type DirectionType } from './utils';
 
 export const moveToTop = (grid: Grid) => {
 	const updatedGrid: Cell[] = [];
@@ -17,9 +17,11 @@ export const moveToTop = (grid: Grid) => {
 		updatedGrid.push(...updatedLine);
 	}
 
-	if (areSameGrids(updatedGrid, grid)) return updatedGrid;
+	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	return addRandomValue(updatedGrid);
+	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+
+	return addRandomValue(cleanedGrid);
 };
 
 export const moveToBottom = (grid: Grid) => {
@@ -35,9 +37,11 @@ export const moveToBottom = (grid: Grid) => {
 		updatedGrid.push(...updatedLine);
 	}
 
-	if (areSameGrids(updatedGrid, grid)) return updatedGrid;
+	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	return addRandomValue(updatedGrid);
+	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+
+	return addRandomValue(cleanedGrid);
 };
 
 export const moveToLeft = (grid: Grid) => {
@@ -53,9 +57,11 @@ export const moveToLeft = (grid: Grid) => {
 		updatedGrid.push(...updatedLine);
 	}
 
-	if (areSameGrids(updatedGrid, grid)) return updatedGrid;
+	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	return addRandomValue(updatedGrid);
+	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+
+	return addRandomValue(cleanedGrid);
 };
 
 export const moveToRight = (grid: Grid) => {
@@ -71,9 +77,11 @@ export const moveToRight = (grid: Grid) => {
 		updatedGrid.push(...updatedLine);
 	}
 
-	if (areSameGrids(updatedGrid, grid)) return updatedGrid;
+	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	return addRandomValue(updatedGrid);
+	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+
+	return addRandomValue(cleanedGrid);
 };
 
 export const recursiveMovementLine = ({

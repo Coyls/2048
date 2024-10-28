@@ -2,6 +2,7 @@ export type Cell = {
 	value: number;
 	row: number;
 	col: number;
+	hasCollided: boolean;
 };
 
 export const GRID_ROWS_LENGTH = 4;
@@ -10,7 +11,12 @@ export const MAX_ROW_INDEX = GRID_ROWS_LENGTH - 1;
 export const MAX_COL_INDEX = GRID_COLS_LENGTH - 1;
 
 export const GRID_BASE = Array.from({ length: GRID_ROWS_LENGTH }, (_, i) =>
-	Array.from({ length: GRID_COLS_LENGTH }, (_, j) => ({ value: 0, row: i, col: j }))
+	Array.from({ length: GRID_COLS_LENGTH }, (_, j) => ({
+		value: 0,
+		row: i,
+		col: j,
+		hasCollided: false
+	}))
 ).flat();
 
 export type Grid = Cell[];

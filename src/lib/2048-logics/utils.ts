@@ -12,6 +12,10 @@ export const replaceCellValue = (grid: Grid, cell: Cell) => {
 	return grid;
 };
 
+export const cleanCollidedCells = (grid: Grid) => {
+	return grid.map((cell) => ({ ...cell, hasCollided: false }));
+};
+
 export const getNextCell = (cell: Cell, direction: DirectionType): Cell => {
 	switch (direction) {
 		case 'top':

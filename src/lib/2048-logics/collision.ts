@@ -3,10 +3,10 @@ import type { Cell } from './base';
 export const collisionTypes = ['isEmpty', 'isDifferent', 'colide', 'colideWithZero'] as const;
 export type CollisionType = (typeof collisionTypes)[number];
 
-export const checkCollision = (cell: number, nextCell: number): CollisionType => {
-	if (cell === nextCell) return 'colide';
-	if (cell === 0) return 'colideWithZero';
-	if (nextCell === 0) return 'isEmpty';
+export const checkCollision = (cell: Cell, nextCell: Cell): CollisionType => {
+	if (cell.value === nextCell.value && !nextCell.hasCollided) return 'colide';
+	if (cell.value === 0) return 'colideWithZero';
+	if (nextCell.value === 0) return 'isEmpty';
 	return 'isDifferent';
 };
 
@@ -30,7 +30,8 @@ export const colideCells = (
 			return {
 				newCurrCell: {
 					...cell,
-					value: cell.value + nextCell.value
+					value: cell.value + nextCell.value,
+					hasCollided: true
 				},
 				newNextCell: {
 					...nextCell,
@@ -57,4 +58,4 @@ export const colideCells = (
 };
 
 export const colide = (cell: Cell, nextCell: Cell) =>
-	colideCells(cell, nextCell, checkCollision(cell.value, nextCell.value));
+	colideCells(cell, nextCell, checkCollision(cell, nextCell));
