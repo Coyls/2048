@@ -4,9 +4,9 @@ export const collisionTypes = ['isEmpty', 'isDifferent', 'colide', 'colideWithZe
 export type CollisionType = (typeof collisionTypes)[number];
 
 export const checkCollision = (cell: Cell, nextCell: Cell): CollisionType => {
-	if (cell.value === nextCell.value && !nextCell.hasCollided) return 'colide';
 	if (cell.value === 0) return 'colideWithZero';
 	if (nextCell.value === 0) return 'isEmpty';
+	if (cell.value === nextCell.value && !nextCell.hasCollided) return 'colide';
 	return 'isDifferent';
 };
 
@@ -21,7 +21,6 @@ export const colideCells = ({
 	score: number;
 	type: CollisionType;
 }): { newCurrentCell: Cell; newNextCell: Cell; newScore: number } => {
-	console.log('type:', type);
 	switch (type) {
 		case 'isEmpty':
 			return {
