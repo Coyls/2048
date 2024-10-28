@@ -4,110 +4,145 @@ import { colide } from './collision';
 import { addRandomValue } from './random-value';
 import { cleanCollidedCells, type DirectionType } from './utils';
 
-export const moveToTop = (grid: Grid) => {
+export const moveToTop = (grid: Grid, score: number) => {
 	const updatedGrid: Cell[] = [];
+	let tmpScore = score;
 	for (let i = 0; i < GRID_COLS_LENGTH; i++) {
 		const line = grid.filter((cell) => cell.col === i);
 
 		const updatedLine = recursiveMovementLine({
 			line: line,
 			direction: 'top',
-			startPosition: getStartPosition('top')
+			startPosition: getStartPosition('top'),
+			score: tmpScore
 		});
-		updatedGrid.push(...updatedLine);
+		updatedGrid.push(...updatedLine.newLine);
+		tmpScore = updatedLine.newScore;
 	}
 
 	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+	if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
 
-	return addRandomValue(cleanedGrid);
+	return {
+		grid: addRandomValue(cleanedGrid),
+		score: tmpScore
+	};
 };
 
-export const moveToBottom = (grid: Grid) => {
+export const moveToBottom = (grid: Grid, score: number) => {
 	const updatedGrid: Cell[] = [];
+	let tmpScore = score;
 	for (let i = MAX_COL_INDEX; i >= 0; i--) {
 		const line = grid.filter((cell) => cell.col === i);
 
 		const updatedLine = recursiveMovementLine({
 			line: line,
 			direction: 'bottom',
-			startPosition: getStartPosition('bottom')
+			startPosition: getStartPosition('bottom'),
+			score: tmpScore
 		});
-		updatedGrid.push(...updatedLine);
+		updatedGrid.push(...updatedLine.newLine);
+		tmpScore = updatedLine.newScore;
 	}
 
 	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+	if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
 
-	return addRandomValue(cleanedGrid);
+	return {
+		grid: addRandomValue(cleanedGrid),
+		score: tmpScore
+	};
 };
 
-export const moveToLeft = (grid: Grid) => {
+export const moveToLeft = (grid: Grid, score: number) => {
 	const updatedGrid: Cell[] = [];
+	let tmpScore = score;
 	for (let i = 0; i < GRID_COLS_LENGTH; i++) {
 		const line = grid.filter((cell) => cell.row === i);
 
 		const updatedLine = recursiveMovementLine({
 			line: line,
 			direction: 'left',
-			startPosition: getStartPosition('left')
+			startPosition: getStartPosition('left'),
+			score: tmpScore
 		});
-		updatedGrid.push(...updatedLine);
+		updatedGrid.push(...updatedLine.newLine);
+		tmpScore = updatedLine.newScore;
 	}
 
 	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+	if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
 
-	return addRandomValue(cleanedGrid);
+	return {
+		grid: addRandomValue(cleanedGrid),
+		score: tmpScore
+	};
 };
 
-export const moveToRight = (grid: Grid) => {
+export const moveToRight = (grid: Grid, score: number) => {
 	const updatedGrid: Cell[] = [];
+	let tmpScore = score;
 	for (let i = MAX_COL_INDEX; i >= 0; i--) {
 		const line = grid.filter((cell) => cell.row === i);
 
 		const updatedLine = recursiveMovementLine({
 			line: line,
 			direction: 'right',
-			startPosition: getStartPosition('right')
+			startPosition: getStartPosition('right'),
+			score: tmpScore
 		});
-		updatedGrid.push(...updatedLine);
+		updatedGrid.push(...updatedLine.newLine);
+		tmpScore = updatedLine.newScore;
 	}
 
 	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
-	if (areSameGrids(cleanedGrid, grid)) return cleanedGrid;
+	if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
 
-	return addRandomValue(cleanedGrid);
+	return {
+		grid: addRandomValue(cleanedGrid),
+		score: tmpScore
+	};
 };
 
 export const recursiveMovementLine = ({
 	line,
 	direction,
-	startPosition
+	startPosition,
+	score
 }: {
 	line: Cell[];
 	direction: DirectionType;
 	startPosition: number;
-}): Cell[] => {
+	score: number;
+}): { newLine: Cell[]; newScore: number } => {
 	let tmpStartPostion = startPosition;
 	let updatedLine = line;
+	let tmpNewScore = score;
 
 	while (whileCondition(tmpStartPostion, direction)) {
 		const currentCell = getCurrentCell(updatedLine, tmpStartPostion, direction);
-		if (!currentCell) return updatedLine;
+		if (!currentCell) return { newLine: updatedLine, newScore: tmpNewScore };
 		const nextCell = getNextCell(updatedLine, currentCell, direction);
-		if (!nextCell) return updatedLine;
+		if (!nextCell) return { newLine: updatedLine, newScore: tmpNewScore };
 
-		const { newCurrCell: newCurrentCell, newNextCell } = colide(currentCell, nextCell);
+		const { newCurrentCell, newNextCell, newScore } = colide({
+			cell: currentCell,
+			nextCell,
+			score: tmpNewScore
+		});
 
+		// !! DEBUG !!
 		// console.log('currCell:', currCell);
 		// console.log('nextCell:', nextCell);
 		// console.log('newCurrCell:', newCurrCell);
 		// console.log('newNextCell:', newNextCell);
+		// console.log('newScore:', newScore);
+
+		tmpNewScore = newScore;
 
 		const updatedLineWithNewCurrCell = updateLine({
 			line: updatedLine,
@@ -146,7 +181,8 @@ export const recursiveMovementLine = ({
 	return recursiveMovementLine({
 		line: updatedLine,
 		direction,
-		startPosition: newStartPosition
+		startPosition: newStartPosition,
+		score: tmpNewScore
 	});
 };
 

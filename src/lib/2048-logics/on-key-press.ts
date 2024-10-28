@@ -1,23 +1,27 @@
 import type { Grid } from './base';
 import { moveToBottom, moveToLeft, moveToRight, moveToTop } from './move';
 
-export const onKeyPress = (event: KeyboardEvent, grid: Grid) => {
+export const onKeyPress = ({
+	event,
+	grid,
+	score
+}: {
+	event: KeyboardEvent;
+	grid: Grid;
+	score: number;
+}) => {
 	const key = event.key;
 
 	switch (key) {
 		case 'ArrowUp':
-			console.log('up');
-			return moveToTop(grid);
+			return moveToTop(grid, score);
 		case 'ArrowDown':
-			console.log('down');
-			return moveToBottom(grid);
+			return moveToBottom(grid, score);
 		case 'ArrowLeft':
-			console.log('left');
-			return moveToLeft(grid);
+			return moveToLeft(grid, score);
 		case 'ArrowRight':
-			console.log('right');
-			return moveToRight(grid);
+			return moveToRight(grid, score);
 		default:
-			return grid;
+			return { grid, score };
 	}
 };

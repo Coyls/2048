@@ -12,7 +12,7 @@ export const replaceCellValue = (grid: Grid, cell: Cell) => {
 	return grid;
 };
 
-export const cleanCollidedCells = (grid: Grid) => {
+export const cleanCollidedCells = (grid: Grid): Cell[] => {
 	return grid.map((cell) => ({ ...cell, hasCollided: false }));
 };
 
@@ -42,5 +42,3 @@ export const getNextCell = (cell: Cell, direction: DirectionType): Cell => {
 			return cell;
 	}
 };
-
-// export const getStartingCell = (cell: Cell, direction: DirectionType): Cell => {};

@@ -10,25 +10,34 @@ export const checkCollision = (cell: Cell, nextCell: Cell): CollisionType => {
 	return 'isDifferent';
 };
 
-export const colideCells = (
-	cell: Cell,
-	nextCell: Cell,
-	type: CollisionType
-): { newCurrCell: Cell; newNextCell: Cell } => {
+export const colideCells = ({
+	cell,
+	nextCell,
+	score,
+	type
+}: {
+	cell: Cell;
+	nextCell: Cell;
+	score: number;
+	type: CollisionType;
+}): { newCurrentCell: Cell; newNextCell: Cell; newScore: number } => {
+	console.log('type:', type);
 	switch (type) {
 		case 'isEmpty':
 			return {
-				newCurrCell: cell,
-				newNextCell: nextCell
+				newCurrentCell: cell,
+				newNextCell: nextCell,
+				newScore: score
 			};
 		case 'isDifferent':
 			return {
-				newCurrCell: cell,
-				newNextCell: nextCell
+				newCurrentCell: cell,
+				newNextCell: nextCell,
+				newScore: score
 			};
 		case 'colide':
 			return {
-				newCurrCell: {
+				newCurrentCell: {
 					...cell,
 					value: cell.value + nextCell.value,
 					hasCollided: true
@@ -36,26 +45,40 @@ export const colideCells = (
 				newNextCell: {
 					...nextCell,
 					value: 0
-				}
+				},
+				newScore: score + cell.value + nextCell.value
 			};
 		case 'colideWithZero':
 			return {
-				newCurrCell: {
+				newCurrentCell: {
 					...cell,
 					value: cell.value + nextCell.value
 				},
 				newNextCell: {
 					...nextCell,
 					value: 0
-				}
+				},
+				newScore: score
 			};
 		default:
 			return {
-				newCurrCell: cell,
-				newNextCell: nextCell
+				newCurrentCell: cell,
+				newNextCell: nextCell,
+				newScore: score
 			};
 	}
 };
 
-export const colide = (cell: Cell, nextCell: Cell) =>
-	colideCells(cell, nextCell, checkCollision(cell, nextCell));
+export const colide = ({
+	cell,
+	nextCell,
+	score
+}: {
+	cell: Cell;
+	nextCell: Cell;
+	score: number;
+}) => {
+	const type = checkCollision(cell, nextCell);
+
+	return colideCells({ cell, nextCell, score, type });
+};

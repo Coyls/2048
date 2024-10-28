@@ -5,6 +5,7 @@
 	import { addRandomValue } from '$lib/2048-logics/random-value';
 
 	let grid = $state(addRandomValue(GRID_BASE));
+	let score = $state(0);
 	let canvas: HTMLCanvasElement;
 
 	let isGameOver = $state(false);
@@ -12,7 +13,9 @@
 
 	$effect(() => {
 		window.addEventListener('keydown', (event) => {
-			grid = onKeyPress(event, grid);
+			const result = onKeyPress({ event, grid, score });
+			grid = result.grid;
+			score = result.score;
 		});
 	});
 
@@ -35,6 +38,8 @@
 	width={MAX_CANVAS_SIZE}
 	height={MAX_CANVAS_SIZE}
 ></canvas>
+
+<div class="text-4xl">Score: {score}</div>
 
 {#if isGameOver}
 	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
