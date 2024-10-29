@@ -19,7 +19,7 @@ export const paint = ({
 }) => {
 	context.font = `bold ${FONT_SIZE}px arial`;
 
-	animateGrid({ prevGrid, newGrid: grid });
+	animateGrid({ prevGrid, newGrid: grid, direction: 'right' });
 
 	for (let i = 0; i < GRID_ROWS_LENGTH; i++) {
 		for (let j = 0; j < GRID_COLS_LENGTH; j++) {

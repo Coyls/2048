@@ -35,6 +35,7 @@ export const moveToBottom = (grid: Grid, score: number) => {
 	let tmpScore = score;
 	for (let i = MAX_COL_INDEX; i >= 0; i--) {
 		const line = grid.filter((cell) => cell.col === i);
+		console.log('line:', line);
 
 		const updatedLine = recursiveMovementLine({
 			line: line,
@@ -42,6 +43,8 @@ export const moveToBottom = (grid: Grid, score: number) => {
 			startPosition: getStartPosition('bottom'),
 			score: tmpScore
 		});
+
+		console.log('updatedLine:', updatedLine.newLine);
 		updatedGrid.push(...updatedLine.newLine);
 		tmpScore = updatedLine.newScore;
 	}
