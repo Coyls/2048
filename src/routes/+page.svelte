@@ -5,11 +5,14 @@
 		calculateIfGameIsWon
 	} from '$lib/2048-logics/calculate-game-over';
 	import { onKeyPress } from '$lib/2048-logics/on-key-press';
-	import { paint } from '$lib/2048-logics/paint';
+	import { paint } from '$lib/canvas/paint';
 	import { addRandomValue } from '$lib/2048-logics/random-value';
 	import { RotateCcw } from 'lucide-svelte';
 
-	let grid = $state(addRandomValue(GRID_BASE));
+	const startingGrid = addRandomValue(GRID_BASE);
+
+	let grid = $state(startingGrid);
+	let prevGrid = $state(startingGrid);
 	let score = $state(0);
 	let canvas: HTMLCanvasElement;
 
@@ -17,7 +20,9 @@
 	let isGameWon = $state(false);
 
 	const resetGame = () => {
-		grid = addRandomValue(GRID_BASE.map((cell) => ({ ...cell, value: 0 })));
+		const newStartingGrid = addRandomValue(GRID_BASE.map((cell) => ({ ...cell, value: 0 })));
+		prevGrid = newStartingGrid;
+		grid = newStartingGrid;
 		score = 0;
 		isGameOver = false;
 		isGameWon = false;
@@ -26,6 +31,7 @@
 	$effect(() => {
 		window.addEventListener('keyup', (event) => {
 			const result = onKeyPress({ event, grid, score });
+			prevGrid = grid;
 			grid = result.grid;
 			score = result.score;
 
@@ -40,7 +46,7 @@
 
 		const { CELL_SIZE, GAP_SIZE } = getCellAndGapSize(canvas.width);
 
-		paint({ context, grid, CELL_SIZE, GAP_SIZE });
+		paint({ context, grid, prevGrid, CELL_SIZE, GAP_SIZE });
 	});
 </script>
 
