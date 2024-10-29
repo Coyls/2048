@@ -7,6 +7,7 @@
 	import { onKeyPress } from '$lib/2048-logics/on-key-press';
 	import { paint } from '$lib/2048-logics/paint';
 	import { addRandomValue } from '$lib/2048-logics/random-value';
+	import { RotateCcw } from 'lucide-svelte';
 
 	let grid = $state(addRandomValue(GRID_BASE));
 	let score = $state(0);
@@ -43,10 +44,15 @@
 	});
 </script>
 
-<canvas bind:this={canvas} width={MAX_CANVAS_SIZE} height={MAX_CANVAS_SIZE}></canvas>
+<main class="mx-auto flex min-h-screen max-w-[500px] flex-col items-center justify-center gap-4">
+	<h1 class="text-6xl font-bold">2048</h1>
+	<div class="flex w-full flex-row items-center justify-between gap-4">
+		<div class="text-4xl">Score: <span class="font-bold"> {score}</span></div>
+		<button onclick={resetGame} class="rounded-md p-2"><RotateCcw /></button>
+	</div>
 
-<div class="text-4xl">Score: {score}</div>
-<button onclick={resetGame} class="mt-4 rounded bg-blue-500 p-2 text-white">Reset</button>
+	<canvas bind:this={canvas} width={MAX_CANVAS_SIZE} height={MAX_CANVAS_SIZE}></canvas>
+</main>
 
 {#if isGameOver}
 	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
