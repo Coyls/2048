@@ -21,7 +21,6 @@ export const GRID_BASE = Array.from({ length: GRID_ROWS_LENGTH }, (_, i) =>
 
 export type Grid = Cell[];
 
-export const CELL_SIZE = 100;
 export const MAX_CANVAS_SIZE = 500;
 export const CELL_PADDING = 16;
 
