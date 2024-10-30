@@ -1,23 +1,23 @@
 import type { Game } from './Game.svelte';
+import { Movement } from './Movement';
 
 export class KeyManager {
 	constructor(private game: Game) {}
 
 	handleKeyUp(event: KeyboardEvent) {
 		const key = event.key;
-		console.log('key:', key);
 
-		/* switch (key) {
+		switch (key) {
 			case 'ArrowUp':
-				return moveToTop(this.game.grid, this.game.score);
+				return Movement.move(this.game.grid, this.game.score, 'top');
 			case 'ArrowDown':
-				return moveToBottom(this.game.grid, this.game.score);
+				return Movement.move(this.game.grid, this.game.score, 'bottom');
 			case 'ArrowLeft':
-				return moveToLeft(this.game.grid, this.game.score);
+				return Movement.move(this.game.grid, this.game.score, 'left');
 			case 'ArrowRight':
-				return moveToRight(this.game.grid, this.game.score);
+				return Movement.move(this.game.grid, this.game.score, 'right');
 			default:
 				return { grid: this.game.grid, score: this.game.score };
-		} */
+		}
 	}
 }

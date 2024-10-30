@@ -7,13 +7,13 @@ import { cleanCollidedCells, type DirectionType } from './utils';
 export const move = (grid: Grid, score: number, direction: DirectionType) => {
 	const updatedGrid: Cell[] = [];
 	let tmpScore = score;
-	getLoop(direction, (i) => {
-		const line = getLineFromDirection({ index: i, direction, grid });
+	createLoopLineFromDirection(direction, (index) => {
+		const line = getLineFromDirection({ index, direction, grid });
 
 		const updatedLine = recursiveMovementLine({
 			line,
 			direction,
-			startPosition: getStartPosition(direction),
+			startPosition: getStartPositionFromDirection(direction),
 			score: tmpScore
 		});
 		updatedGrid.push(...updatedLine.newLine);
@@ -108,7 +108,7 @@ export const recursiveMovementLine = ({
 	});
 };
 
-export const getStartPosition = (direction: DirectionType): number => {
+export const getStartPositionFromDirection = (direction: DirectionType): number => {
 	switch (direction) {
 		case 'top':
 			return 0;
@@ -237,7 +237,10 @@ export const getLineFromDirection = ({
 	}
 };
 
-export const getLoop = (direction: DirectionType, callBack: (i: number) => void) => {
+export const createLoopLineFromDirection = (
+	direction: DirectionType,
+	callBack: (index: number) => void
+) => {
 	switch (direction) {
 		case 'top':
 			for (let i = 0; i < GRID_COLS_LENGTH; i++) {

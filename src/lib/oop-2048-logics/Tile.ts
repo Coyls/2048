@@ -4,11 +4,13 @@ export class Tile {
 	id: string;
 	value: number;
 	parents: ParentsTile;
+	hasCollided: boolean;
 
 	constructor(parents: ParentsTile = null) {
 		this.id = this.createId();
 		this.value = this.setValue(parents);
 		this.parents = parents;
+		this.hasCollided = Boolean(parents);
 	}
 
 	private createId = () => Math.random().toString(36).substring(2, 15);
