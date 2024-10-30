@@ -51,14 +51,15 @@ export class Movement {
 		updatedGrid.cleanCollidedCells();
 
 		if (Grid.areSameGrids(updatedGrid, this.game.grid)) {
-			return { grid: updatedGrid, score: this.tmpScore };
+			return { grid: updatedGrid, score: this.tmpScore, newTile: null };
 		}
 
-		updatedGrid.addRandomValue();
+		const newTile = updatedGrid.addRandomValue();
 
 		return {
 			grid: updatedGrid,
-			score: this.tmpScore
+			score: this.tmpScore,
+			newTile: { ...newTile }
 		};
 	}
 
@@ -136,9 +137,7 @@ export class Movement {
 		switch (this.direction) {
 			case 'top':
 				this.startPosition++;
-				console.log('this.startPosition++;:', this.startPosition);
 				this.tmpStartPosition = this.startPosition;
-				console.log('this.tmpStartPosition:', this.tmpStartPosition);
 				break;
 			case 'bottom':
 				this.startPosition--;
@@ -187,7 +186,6 @@ export class Movement {
 		}
 	}
 
-	// todos : OULA ca vas pas
 	private updateLine({ line, currCell, newCell }: { line: Cell[]; currCell: Cell; newCell: Cell }) {
 		switch (this.direction) {
 			case 'top':

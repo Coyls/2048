@@ -1,17 +1,21 @@
 import { getCellColorViolet, TEXT_COLOR_VIOLET } from '$lib/2048-logics/cell-color';
 import { getCharacterSize } from '$lib/2048-logics/utils';
+import { type AnimationState, PaintingState } from './AnimationState';
 import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 
 // todo: move to constants file
 const FONT_SIZE = 32;
+const ANIMATION_FRAME_COUNT = 30;
 
 export class CanvasManager {
 	canvas: HTMLCanvasElement | null = null;
 	canvasSize: number;
+	context: CanvasRenderingContext2D | null = null;
 	cellSize: number;
 	gapSize: number;
 	game: Game;
+	animationState: AnimationState;
 
 	constructor(game: Game, canvasSize: number) {
 		this.canvasSize = canvasSize;
@@ -19,7 +23,21 @@ export class CanvasManager {
 		this.cellSize = cellSize;
 		this.gapSize = gapSize;
 		this.game = game;
+		this.animationState = new PaintingState(this);
 	}
+
+	paintCanvas = () => {
+		this.animationState.paintCanvas();
+	};
+
+	setState = (state: AnimationState) => {
+		this.animationState = state;
+		this.paintCanvas();
+	};
+
+	startCycle = () => {
+		this.animationState.startCycle();
+	};
 
 	private getCellAndGapSize = (canvasSize: number): { cellSize: number; gapSize: number } => {
 		const cellSize = (5 * canvasSize) / 23; // Simplification de l'équation
@@ -29,8 +47,10 @@ export class CanvasManager {
 	};
 
 	paint = () => {
-		const context = this.canvas?.getContext('2d');
+		const context = this.context;
 		if (!context) return;
+
+		this.cleanCanvas();
 
 		context.font = `bold ${FONT_SIZE}px arial`;
 
@@ -44,6 +64,46 @@ export class CanvasManager {
 		}
 	};
 
+	async animationNewTile({ cell }: { cell: Cell }) {
+		const context = this.context;
+		if (!context) return;
+		console.log('context:', context);
+
+		const x = cell.col * (this.cellSize + this.gapSize);
+		const y = cell.row * (this.cellSize + this.gapSize);
+
+		const frame = 0;
+
+		this.paint();
+
+		const animateFrame = async (frame: number) => {
+			if (frame >= ANIMATION_FRAME_COUNT) return;
+
+			const size = (this.cellSize * frame) / ANIMATION_FRAME_COUNT;
+			const offset = (this.cellSize - size) / 2;
+
+			this.paintSquareBase({
+				context,
+				x: x + offset,
+				y: y + offset,
+				value: cell.content!.value,
+				cellSize: size
+			});
+			this.paintText({ context, x, y, value: cell.content!.value });
+
+			await new Promise((resolve) => setTimeout(resolve, 10));
+			await animateFrame(frame + 1);
+		};
+
+		await animateFrame(frame);
+	}
+
+	private cleanCanvas = () => {
+		const context = this.context;
+		if (!context) return;
+		context.clearRect(0, 0, this.canvasSize, this.canvasSize);
+	};
+
 	private paintEmptyCell = ({
 		context,
 		cell
@@ -54,7 +114,7 @@ export class CanvasManager {
 		const x = cell.col * (this.cellSize + this.gapSize);
 		const y = cell.row * (this.cellSize + this.gapSize);
 
-		this.paintSquareBase({ context, x, y, value: 0 });
+		this.paintSquareBase({ context, x, y, value: 0, cellSize: this.cellSize });
 	};
 
 	private paintTile = ({ context, cell }: { context: CanvasRenderingContext2D; cell: Cell }) => {
@@ -62,17 +122,11 @@ export class CanvasManager {
 		const x = cell.col * (this.cellSize + this.gapSize);
 		const y = cell.row * (this.cellSize + this.gapSize);
 
-		this.paintSquareBase({ context, x, y, value: cell.content.value });
-
-		context.fillStyle = TEXT_COLOR_VIOLET;
-		context.fillText(
-			cell.content.value.toString(),
-			x + this.cellSize / 2 - (getCharacterSize(cell.content.value) * FONT_SIZE) / 4,
-			y + this.cellSize / 2 + FONT_SIZE / 4
-		);
+		this.paintSquareBase({ context, x, y, value: cell.content.value, cellSize: this.cellSize });
+		this.paintText({ context, x, y, value: cell.content.value });
 	};
 
-	private paintSquareBase = ({
+	private paintText = ({
 		context,
 		x,
 		y,
@@ -83,10 +137,31 @@ export class CanvasManager {
 		y: number;
 		value: number;
 	}) => {
+		context.fillStyle = TEXT_COLOR_VIOLET;
+		context.fillText(
+			value.toString(),
+			x + this.cellSize / 2 - (getCharacterSize(value) * FONT_SIZE) / 4,
+			y + this.cellSize / 2 + FONT_SIZE / 4
+		);
+	};
+
+	private paintSquareBase = ({
+		context,
+		x,
+		y,
+		cellSize,
+		value
+	}: {
+		context: CanvasRenderingContext2D;
+		x: number;
+		y: number;
+		cellSize: number;
+		value: number;
+	}) => {
 		const cellColor = getCellColorViolet(value);
 		context.fillStyle = cellColor;
 		context.beginPath();
-		context.roundRect(x, y, this.cellSize, this.cellSize, 10);
+		context.roundRect(x, y, cellSize, cellSize, 10);
 		context.fill();
 	};
 }

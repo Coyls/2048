@@ -2,6 +2,7 @@
 	import { MAX_CANVAS_SIZE } from '$lib/2048-logics/base';
 	import { Game } from '$lib/oop-2048-logics/Game.svelte';
 	import { RotateCcw } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
 	const game = new Game({
 		gridRowsLength: 4,
@@ -9,13 +10,21 @@
 		canvasSize: MAX_CANVAS_SIZE
 	});
 
+	game.canvasManager.paint();
+
 	const resetGame = () => {
 		game.reset();
+		game.canvasManager.paint();
 	};
 
+	onMount(() => {
+		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
+		game.canvasManager.paint();
+	});
+
 	$effect(() => {
-		const handleKeyUp = (event: KeyboardEvent) => {
-			game.keyManager.handleKeyUp(event);
+		const handleKeyUp = async (event: KeyboardEvent) => {
+			await game.keyManager.handleKeyUp(event);
 		};
 
 		window.addEventListener('keyup', handleKeyUp);
@@ -23,10 +32,6 @@
 		return () => {
 			window.removeEventListener('keyup', handleKeyUp);
 		};
-	});
-
-	$effect(() => {
-		game.canvasManager.paint();
 	});
 </script>
 

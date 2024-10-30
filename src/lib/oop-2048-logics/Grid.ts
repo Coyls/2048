@@ -24,6 +24,7 @@ export class Grid {
 		const emptyCells = this.cells.filter((cell) => cell.content === null);
 		const randomEmptyCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
 		randomEmptyCell.content = new Tile();
+		return randomEmptyCell;
 	}
 
 	cleanCollidedCells() {

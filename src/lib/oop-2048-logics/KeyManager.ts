@@ -1,39 +1,27 @@
 import type { Game } from './Game.svelte';
-import { Movement } from './Movement';
+import { Movement, type DirectionType } from './Movement';
 
 export class KeyManager {
 	constructor(private game: Game) {}
 
-	handleKeyUp(event: KeyboardEvent) {
+	async handleKeyUp(event: KeyboardEvent) {
 		const key = event.key;
 
 		switch (key) {
 			case 'ArrowUp': {
-				const movement = new Movement(this.game, 'top');
-				const { grid, score } = movement.move();
-				this.game.grid = grid;
-				this.game.score = score;
+				await this.onKeyUp('top');
 				break;
 			}
 			case 'ArrowDown': {
-				const movement = new Movement(this.game, 'bottom');
-				const { grid, score } = movement.move();
-				this.game.grid = grid;
-				this.game.score = score;
+				await this.onKeyUp('bottom');
 				break;
 			}
 			case 'ArrowLeft': {
-				const movement = new Movement(this.game, 'left');
-				const { grid, score } = movement.move();
-				this.game.grid = grid;
-				this.game.score = score;
+				await this.onKeyUp('left');
 				break;
 			}
 			case 'ArrowRight': {
-				const movement = new Movement(this.game, 'right');
-				const { grid, score } = movement.move();
-				this.game.grid = grid;
-				this.game.score = score;
+				await this.onKeyUp('right');
 				break;
 			}
 			default:
@@ -43,4 +31,17 @@ export class KeyManager {
 		this.game.checkIfGameIsWon();
 		this.game.checkIfGameIsOver();
 	}
+
+	private onKeyUp = async (direction: DirectionType) => {
+		const movement = new Movement(this.game, direction);
+		const { grid, score, newTile } = movement.move();
+		this.game.score = score;
+		this.game.grid = grid;
+
+		this.game.canvasManager.startCycle();
+
+		if (newTile) {
+			await this.game.canvasManager.animationNewTile({ cell: newTile });
+		}
+	};
 }
