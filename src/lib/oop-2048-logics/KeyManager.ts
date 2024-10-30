@@ -13,31 +13,34 @@ export class KeyManager {
 				const { grid, score } = movement.move();
 				this.game.grid = grid;
 				this.game.score = score;
-				return { grid, score };
+				break;
 			}
 			case 'ArrowDown': {
 				const movement = new Movement(this.game, 'bottom');
 				const { grid, score } = movement.move();
 				this.game.grid = grid;
 				this.game.score = score;
-				return { grid, score };
+				break;
 			}
 			case 'ArrowLeft': {
 				const movement = new Movement(this.game, 'left');
 				const { grid, score } = movement.move();
 				this.game.grid = grid;
 				this.game.score = score;
-				return { grid, score };
+				break;
 			}
 			case 'ArrowRight': {
 				const movement = new Movement(this.game, 'right');
 				const { grid, score } = movement.move();
 				this.game.grid = grid;
 				this.game.score = score;
-				return { grid, score };
+				break;
 			}
 			default:
-				return { grid: this.game.grid, score: this.game.score };
+				break;
 		}
+
+		this.game.checkIfGameIsWon();
+		this.game.checkIfGameIsOver();
 	}
 }

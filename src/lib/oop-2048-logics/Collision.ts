@@ -20,7 +20,7 @@ export class Collision {
 		return this.colideCells({ type });
 	}
 
-	private checkCollision(): CollisionType {
+	checkCollision(): CollisionType {
 		if (this.currentCell.content === null) return 'colideWithZero';
 		if (this.nextCell.content === null) return 'isEmpty';
 		if (
