@@ -1,117 +1,126 @@
-import { areSameGrids } from '../2048-logics/are-same-grids';
 import {
 	GRID_COLS_LENGTH,
 	GRID_ROWS_LENGTH,
 	MAX_COL_INDEX,
 	MAX_ROW_INDEX
 } from '../2048-logics/base';
-import { colide } from '../2048-logics/collision';
-import { addRandomValue } from '../2048-logics/random-value';
-import { cleanCollidedCells, type DirectionType } from '../2048-logics/utils';
+import { Collision } from './Collision';
+
+export const directionTypes = ['top', 'bottom', 'left', 'right'] as const;
+export type DirectionType = (typeof directionTypes)[number];
 
 import { Cell } from './Cell';
+import type { Game } from './Game.svelte';
 import { Grid } from './Grid';
 
 export class Movement {
-	static move(grid: Grid, score: number, direction: DirectionType) {
-		const updatedGrid: Grid = new Grid(grid.gridRowsLength, grid.gridColsLength);
-		let tmpScore = score;
-		this.createLoopLineFromDirection(direction, (index) => {
-			const line = this.getLineFromDirection({ index, direction, grid });
+	direction: DirectionType;
+	tmpCells: Cell[] = [];
+	tmpScore: number = 0;
+	startPosition: number = 0;
+	tmpStartPosition: number = 0;
+
+	constructor(
+		private game: Game,
+		direction: DirectionType
+	) {
+		this.direction = direction;
+		this.tmpScore = game.score;
+		this.startPosition = this.getStartPositionFromDirection();
+		this.tmpStartPosition = this.getStartPositionFromDirection();
+	}
+
+	move() {
+		this.createLoopLineFromDirection((index) => {
+			const line = this.getLineFromDirection({ index, grid: this.game.grid });
 
 			const updatedLine = this.recursiveMovementLine({
-				line,
-				direction,
-				startPosition: this.getStartPositionFromDirection(direction),
-				score: tmpScore
+				line
 			});
-			updatedGrid.cells.push(...updatedLine.newLine);
-			tmpScore = updatedLine.newScore;
+
+			this.tmpCells.push(...updatedLine.newLine);
+			this.tmpScore = updatedLine.newScore;
+			this.tmpStartPosition = this.getStartPositionFromDirection();
+			this.startPosition = this.getStartPositionFromDirection();
 		});
 
-		const cleanedGrid = cleanCollidedCells(updatedGrid);
+		const updatedGrid = new Grid(this.game.grid.gridRowsLength, this.game.grid.gridColsLength);
 
-		if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
+		updatedGrid.cells = this.tmpCells;
+
+		updatedGrid.cleanCollidedCells();
+
+		console.log('ARE SAME GRID', Grid.areSameGrids(updatedGrid, this.game.grid));
+
+		if (Grid.areSameGrids(updatedGrid, this.game.grid)) {
+			return { grid: updatedGrid, score: this.tmpScore };
+		}
+
+		updatedGrid.addRandomValue();
 
 		return {
-			grid: addRandomValue(cleanedGrid),
-			score: tmpScore
+			grid: updatedGrid,
+			score: this.tmpScore
 		};
 	}
 
-	static recursiveMovementLine({
-		line,
-		direction,
-		startPosition,
-		score
-	}: {
-		line: Cell[];
-		direction: DirectionType;
-		startPosition: number;
-		score: number;
-	}): { newLine: Cell[]; newScore: number } {
-		let tmpStartPostion = startPosition;
+	recursiveMovementLine({ line }: { line: Cell[] }): {
+		newLine: Cell[];
+		newScore: number;
+	} {
 		let updatedLine = line;
-		let tmpNewScore = score;
 
-		while (this.whileCondition(tmpStartPostion, direction)) {
-			const currentCell = this.getCurrentCell(updatedLine, tmpStartPostion, direction);
-			if (!currentCell) return { newLine: updatedLine, newScore: tmpNewScore };
-			const nextCell = this.getNextCell(updatedLine, currentCell, direction);
-			if (!nextCell) return { newLine: updatedLine, newScore: tmpNewScore };
+		while (this.whileCondition()) {
+			const currentCell = this.getCurrentCell(updatedLine);
+			if (!currentCell) return { newLine: updatedLine, newScore: this.tmpScore };
+			const nextCell = this.getNextCell(updatedLine, currentCell);
+			if (!nextCell) return { newLine: updatedLine, newScore: this.tmpScore };
 
-			const { newCurrentCell, newNextCell, newScore } = colide({
-				cell: currentCell,
-				nextCell,
-				score: tmpNewScore
-			});
+			const collision = new Collision(currentCell, nextCell, this.tmpScore);
 
-			tmpNewScore = newScore;
+			const { newCurrentCell, newNextCell, newScore } = collision.colide();
+
+			this.tmpScore = newScore;
 
 			const updatedLineWithNewCurrCell = this.updateLine({
 				line: updatedLine,
 				currCell: currentCell,
-				newCell: newCurrentCell,
-				direction
+				newCell: newCurrentCell
 			});
 
 			updatedLine = this.updateLine({
 				line: updatedLineWithNewCurrCell,
 				currCell: newNextCell,
-				newCell: newNextCell,
-				direction
+				newCell: newNextCell
 			});
 
-			switch (direction) {
+			switch (this.direction) {
 				case 'top':
-					tmpStartPostion--;
+					this.tmpStartPosition--;
 					break;
 				case 'bottom':
-					tmpStartPostion++;
+					this.tmpStartPosition++;
 					break;
 				case 'left':
-					tmpStartPostion--;
+					this.tmpStartPosition--;
 					break;
 				case 'right':
-					tmpStartPostion++;
+					this.tmpStartPosition++;
 					break;
 				default:
 					break;
 			}
 		}
 
-		const newStartPosition = this.getNewStartPosition(startPosition, direction);
+		this.getNewStartPosition();
 
 		return this.recursiveMovementLine({
-			line: updatedLine,
-			direction,
-			startPosition: newStartPosition,
-			score: tmpNewScore
+			line: updatedLine
 		});
 	}
 
-	static getStartPositionFromDirection(direction: DirectionType): number {
-		switch (direction) {
+	private getStartPositionFromDirection(): number {
+		switch (this.direction) {
 			case 'top':
 				return 0;
 			case 'bottom':
@@ -125,42 +134,48 @@ export class Movement {
 		}
 	}
 
-	static getNewStartPosition(position: number, direction: DirectionType): number {
-		switch (direction) {
+	private getNewStartPosition() {
+		switch (this.direction) {
 			case 'top':
-				return position + 1;
+				this.startPosition++;
+				console.log('this.startPosition++;:', this.startPosition);
+				this.tmpStartPosition = this.startPosition;
+				console.log('this.tmpStartPosition:', this.tmpStartPosition);
+				break;
 			case 'bottom':
-				return position - 1;
+				this.startPosition--;
+				this.tmpStartPosition = this.startPosition;
+				break;
 			case 'left':
-				return position + 1;
+				this.startPosition++;
+				this.tmpStartPosition = this.startPosition;
+				break;
 			case 'right':
-				return position - 1;
+				this.startPosition--;
+				this.tmpStartPosition = this.startPosition;
+				break;
 			default:
-				return 0;
+				break;
 		}
 	}
 
-	static getCurrentCell(
-		line: Cell[],
-		startPosition: number,
-		direction: DirectionType
-	): Cell | undefined {
-		switch (direction) {
+	private getCurrentCell(line: Cell[]): Cell | undefined {
+		switch (this.direction) {
 			case 'top':
-				return line.find((cell) => cell.row === startPosition);
+				return line.find((cell) => cell.row === this.tmpStartPosition);
 			case 'bottom':
-				return line.find((cell) => cell.row === startPosition);
+				return line.find((cell) => cell.row === this.tmpStartPosition);
 			case 'left':
-				return line.find((cell) => cell.col === startPosition);
+				return line.find((cell) => cell.col === this.tmpStartPosition);
 			case 'right':
-				return line.find((cell) => cell.col === startPosition);
+				return line.find((cell) => cell.col === this.tmpStartPosition);
 			default:
 				return undefined;
 		}
 	}
 
-	static getNextCell(line: Cell[], currentCell: Cell, direction: DirectionType): Cell | undefined {
-		switch (direction) {
+	private getNextCell(line: Cell[], currentCell: Cell): Cell | undefined {
+		switch (this.direction) {
 			case 'top':
 				return line.find((cells) => cells.row === currentCell.row + 1);
 			case 'bottom':
@@ -174,18 +189,9 @@ export class Movement {
 		}
 	}
 
-	static updateLine({
-		line,
-		currCell,
-		newCell,
-		direction
-	}: {
-		line: Cell[];
-		currCell: Cell;
-		newCell: Cell;
-		direction: DirectionType;
-	}) {
-		switch (direction) {
+	// todos : OULA ca vas pas
+	private updateLine({ line, currCell, newCell }: { line: Cell[]; currCell: Cell; newCell: Cell }) {
+		switch (this.direction) {
 			case 'top':
 				return line.map((cells) => (cells.row === currCell.row ? newCell : cells));
 			case 'bottom':
@@ -199,44 +205,36 @@ export class Movement {
 		}
 	}
 
-	static whileCondition(startPosition: number, direction: DirectionType) {
-		switch (direction) {
+	private whileCondition() {
+		switch (this.direction) {
 			case 'top':
-				return startPosition >= 0;
+				return this.tmpStartPosition >= 0;
 			case 'bottom':
-				return startPosition <= MAX_ROW_INDEX;
+				return this.tmpStartPosition <= MAX_ROW_INDEX;
 			case 'left':
-				return startPosition >= 0;
+				return this.tmpStartPosition >= 0;
 			case 'right':
-				return startPosition <= MAX_COL_INDEX;
+				return this.tmpStartPosition <= MAX_COL_INDEX;
 			default:
 				return false;
 		}
 	}
 
-	static getLineFromDirection({
-		index,
-		direction,
-		grid
-	}: {
-		index: number;
-		direction: DirectionType;
-		grid: Grid;
-	}) {
-		switch (direction) {
+	private getLineFromDirection({ index, grid }: { index: number; grid: Grid }) {
+		switch (this.direction) {
 			case 'top':
-				return grid.filter((cell) => cell.col === index);
+				return grid.cells.filter((cell) => cell.col === index);
 			case 'bottom':
-				return grid.filter((cell) => cell.col === index);
+				return grid.cells.filter((cell) => cell.col === index);
 			case 'left':
-				return grid.filter((cell) => cell.row === index);
+				return grid.cells.filter((cell) => cell.row === index);
 			case 'right':
-				return grid.filter((cell) => cell.row === index);
+				return grid.cells.filter((cell) => cell.row === index);
 		}
 	}
 
-	static createLoopLineFromDirection(direction: DirectionType, callBack: (index: number) => void) {
-		switch (direction) {
+	private createLoopLineFromDirection(callBack: (index: number) => void) {
+		switch (this.direction) {
 			case 'top':
 				for (let i = 0; i < GRID_COLS_LENGTH; i++) {
 					callBack(i);

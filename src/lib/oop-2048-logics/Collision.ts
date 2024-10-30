@@ -15,6 +15,11 @@ export class Collision {
 		this.score = score;
 	}
 
+	colide() {
+		const type = this.checkCollision();
+		return this.colideCells({ type });
+	}
+
 	private checkCollision(): CollisionType {
 		if (this.currentCell.content === null) return 'colideWithZero';
 		if (this.nextCell.content === null) return 'isEmpty';
@@ -75,10 +80,5 @@ export class Collision {
 					newScore: this.score
 				};
 		}
-	}
-
-	colide() {
-		const type = this.checkCollision();
-		return this.colideCells({ type });
 	}
 }

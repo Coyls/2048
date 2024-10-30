@@ -1,7 +1,5 @@
 <script lang="ts">
-	import { GRID_BASE, MAX_CANVAS_SIZE } from '$lib/2048-logics/base';
-	import { onKeyPress } from '$lib/2048-logics/on-key-press';
-	import { addRandomValue } from '$lib/2048-logics/random-value';
+	import { MAX_CANVAS_SIZE } from '$lib/2048-logics/base';
 	import { Game } from '$lib/oop-2048-logics/Game.svelte';
 	import { RotateCcw } from 'lucide-svelte';
 
@@ -11,22 +9,13 @@
 		canvasSize: MAX_CANVAS_SIZE
 	});
 
-	const startingGrid = addRandomValue(GRID_BASE);
-
-	let grid = $state(startingGrid);
-	let prevGrid = $state(startingGrid);
-
 	const resetGame = () => {
 		game.reset();
 	};
 
 	$effect(() => {
 		const handleKeyUp = (event: KeyboardEvent) => {
-			const result = onKeyPress({ event, grid, score: game.score });
-			prevGrid = grid;
-			grid = result.grid;
-			game.score = result.score;
-			console.log('result.score:', result.score);
+			game.keyManager.handleKeyUp(event);
 		};
 
 		window.addEventListener('keyup', handleKeyUp);
@@ -37,13 +26,6 @@
 	});
 
 	$effect(() => {
-		/* const context = game.canvasManager.canvas?.getContext('2d');
-		if (!context) return;
-
-		const { CELL_SIZE, GAP_SIZE } = getCellAndGapSize(game.canvasManager.canvasSize);
-
-		paint({ context, grid, CELL_SIZE, GAP_SIZE }); */
-
 		game.canvasManager.paint();
 	});
 </script>

@@ -3,7 +3,7 @@ import { Grid } from './Grid';
 import { KeyManager } from './KeyManager';
 
 export class Game {
-	grid: Grid;
+	grid = $state(new Grid(4, 4));
 	score = $state(0);
 	isGameOver = $state(false);
 	isGameWon = $state(false);
