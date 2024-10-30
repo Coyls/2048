@@ -50,8 +50,6 @@ export class Movement {
 
 		updatedGrid.cleanCollidedCells();
 
-		console.log('ARE SAME GRID', Grid.areSameGrids(updatedGrid, this.game.grid));
-
 		if (Grid.areSameGrids(updatedGrid, this.game.grid)) {
 			return { grid: updatedGrid, score: this.tmpScore };
 		}

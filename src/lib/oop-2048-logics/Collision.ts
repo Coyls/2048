@@ -25,7 +25,8 @@ export class Collision {
 		if (this.nextCell.content === null) return 'isEmpty';
 		if (
 			this.currentCell.content.value === this.nextCell.content.value &&
-			!this.nextCell.content.hasCollided
+			!this.nextCell.content.hasCollided &&
+			!this.currentCell.content.hasCollided
 		)
 			return 'colide';
 		return 'isDifferent';
