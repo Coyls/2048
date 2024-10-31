@@ -5,6 +5,7 @@ import { Collision } from './Collision';
 import { Grid } from './Grid';
 import { KeyManager } from './KeyManager';
 
+// todo: move to config file
 export const WIN_CONDITION = 2048;
 
 interface DataForAnimation {
@@ -15,6 +16,7 @@ interface DataForAnimation {
 }
 
 export class Game {
+	// todo: move to config file (4, 4)
 	grid = $state(new Grid(4, 4));
 	score = $state(0);
 	isGameOver = $state(false);

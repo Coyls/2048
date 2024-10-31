@@ -5,8 +5,11 @@ import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
 
 // todo: move to config file
-const FONT_SIZE = 32;
 const ANIMATION_FRAME_COUNT = 30;
+const FONT_SIZE = 32;
+const FONT_FAMILY = 'arial';
+const FONT_WEIGHT = 'bold';
+const CANVAS_FONT = `${FONT_WEIGHT} ${FONT_SIZE}px ${FONT_FAMILY}`;
 
 export class CanvasManager {
 	canvas: HTMLCanvasElement | null = null;
@@ -24,12 +27,10 @@ export class CanvasManager {
 		this.game = game;
 	}
 
-	// ! /////////////////////////////////////////////////
-
 	async draw(animate: boolean = true) {
 		const context = this.context;
 		if (!context) return;
-		context.font = `bold ${FONT_SIZE}px arial`;
+		context.font = CANVAS_FONT;
 
 		this.clearCanvas(context);
 		this.paintEmptyCells(context);
@@ -38,6 +39,7 @@ export class CanvasManager {
 		}
 
 		// ! ICI ANIMATION DE LA GRILLE
+		// * LET'S GO !!
 
 		this.clearCanvas(context);
 		this.paintEmptyCells(context);
@@ -110,15 +112,17 @@ export class CanvasManager {
 		await animateFrame(frame);
 	}
 
-	// ! /////////////////////////////////////////////////
-
+	/**
+	 * ! A utiliser pour debug uniquement
+	 * @deprecated
+	 */
 	paint(grid: Grid = this.game.grid) {
 		const context = this.context;
 		if (!context) return;
 
 		this.cleanCanvas();
 
-		context.font = `bold ${FONT_SIZE}px arial`;
+		context.font = CANVAS_FONT;
 
 		for (let i = 0; i < this.game.gridRowsLength; i++) {
 			for (let j = 0; j < this.game.gridColsLength; j++) {
