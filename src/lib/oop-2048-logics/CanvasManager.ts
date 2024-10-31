@@ -4,7 +4,7 @@ import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
 
-// todo: move to constants file
+// todo: move to config file
 const FONT_SIZE = 32;
 const ANIMATION_FRAME_COUNT = 30;
 
@@ -36,6 +36,8 @@ export class CanvasManager {
 		if (this.game.dataForAnimation.previousGrid) {
 			this.paintTiles(context, this.game.dataForAnimation.previousGrid.cells);
 		}
+
+		// ! ICI ANIMATION DE LA GRILLE
 
 		this.clearCanvas(context);
 		this.paintEmptyCells(context);
@@ -114,7 +116,6 @@ export class CanvasManager {
 		const context = this.context;
 		if (!context) return;
 
-		context.save();
 		this.cleanCanvas();
 
 		context.font = `bold ${FONT_SIZE}px arial`;
@@ -127,8 +128,6 @@ export class CanvasManager {
 				this.paintTile({ context, cell });
 			}
 		}
-
-		context.restore();
 	}
 
 	private cleanCanvas() {

@@ -51,13 +51,6 @@ export class Game {
 		this.canvasManager = new CanvasManager(this, canvasSize);
 	}
 
-	/* setupAnimation(previousGridClone: Grid, newGridClone: Grid, newTile: Cell) {
-		this.dataForAnimation.previousGrid = previousGridClone;
-		this.dataForAnimation.currentGridBeforeAddingNewTile = newGridClone;
-		this.dataForAnimation.newTile = newTile;
-		this.dataForAnimation.currentGrid = newGridClone;
-	} */
-
 	private resetGrid() {
 		const newGrid = new Grid(this.gridRowsLength, this.gridColsLength);
 		this.dataForAnimation.previousGrid = newGrid.clone();
