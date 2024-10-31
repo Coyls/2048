@@ -10,12 +10,9 @@
 		canvasSize: MAX_CANVAS_SIZE
 	});
 
-	// game.canvasManager.paint();
-
 	const resetGame = async () => {
 		game.reset();
-		// game.canvasManager.paint();
-		await game.canvasManager.startCycle();
+		await game.canvasManager.draw();
 	};
 
 	onMount(async () => {

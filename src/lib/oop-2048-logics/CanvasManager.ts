@@ -1,6 +1,5 @@
 import { getCellColorViolet, TEXT_COLOR_VIOLET } from '$lib/2048-logics/cell-color';
 import { getCharacterSize } from '$lib/2048-logics/utils';
-import { type AnimationState, PaintingState } from './AnimationState';
 import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
@@ -16,7 +15,6 @@ export class CanvasManager {
 	cellSize: number;
 	gapSize: number;
 	game: Game;
-	animationState: AnimationState;
 
 	constructor(game: Game, canvasSize: number) {
 		this.canvasSize = canvasSize;
@@ -24,22 +22,34 @@ export class CanvasManager {
 		this.cellSize = cellSize;
 		this.gapSize = gapSize;
 		this.game = game;
-		this.animationState = new PaintingState(this);
 	}
 
 	// ! /////////////////////////////////////////////////
 
-	async draw() {
+	async draw(animate: boolean = true) {
 		const context = this.context;
 		if (!context) return;
+		context.font = `bold ${FONT_SIZE}px arial`;
 
 		this.clearCanvas(context);
-
-		context.font = `bold ${FONT_SIZE}px arial`;
 		this.paintEmptyCells(context);
+		if (this.game.dataForAnimation.previousGrid) {
+			this.paintTiles(context, this.game.dataForAnimation.previousGrid.cells);
+		}
 
-		// todo: pense a mettre en param la grid precedente
-		this.paintTiles(context);
+		this.clearCanvas(context);
+		this.paintEmptyCells(context);
+		if (this.game.dataForAnimation.currentGridBeforeAddingNewTile) {
+			this.paintTiles(context, this.game.dataForAnimation.currentGridBeforeAddingNewTile.cells);
+		}
+
+		if (this.game.dataForAnimation.newTile && animate) {
+			await this.animationNewTile({ cell: this.game.dataForAnimation.newTile });
+		}
+
+		this.clearCanvas(context);
+		this.paintEmptyCells(context);
+		this.paintTiles(context, this.game.grid.cells);
 	}
 
 	private paintEmptyCells(context: CanvasRenderingContext2D) {
@@ -52,10 +62,10 @@ export class CanvasManager {
 		}
 	}
 
-	private paintTiles(context: CanvasRenderingContext2D) {
+	private paintTiles(context: CanvasRenderingContext2D, cells: Cell[]) {
 		for (let i = 0; i < this.game.gridRowsLength; i++) {
 			for (let j = 0; j < this.game.gridColsLength; j++) {
-				const cell = this.game.grid.cells.find((cell) => cell.row === i && cell.col === j)!;
+				const cell = cells.find((cell) => cell.row === i && cell.col === j)!;
 
 				this.paintTile({ context, cell });
 			}
@@ -66,20 +76,39 @@ export class CanvasManager {
 		context.clearRect(0, 0, this.canvasSize, this.canvasSize);
 	}
 
+	private async animationNewTile({ cell }: { cell: Cell }) {
+		const context = this.context;
+		if (!context) return;
+
+		const x = cell.col * (this.cellSize + this.gapSize);
+		const y = cell.row * (this.cellSize + this.gapSize);
+
+		const frame = 0;
+
+		const animateFrame = async (frame: number) => {
+			if (frame >= ANIMATION_FRAME_COUNT) return;
+
+			const size = (this.cellSize * frame) / ANIMATION_FRAME_COUNT;
+			const offset = (this.cellSize - size) / 2;
+
+			this.paintSquareBase({
+				context,
+				x: x + offset,
+				y: y + offset,
+				value: cell.content!.value,
+				cellSize: size
+			});
+			this.paintText({ context, x, y, value: cell.content!.value });
+
+			await new Promise((resolve) => setTimeout(resolve, 10));
+
+			await animateFrame(frame + 1);
+		};
+
+		await animateFrame(frame);
+	}
+
 	// ! /////////////////////////////////////////////////
-
-	async paintCanvas() {
-		await this.animationState.paintCanvas();
-	}
-
-	async setState(state: AnimationState) {
-		this.animationState = state;
-		await this.paintCanvas();
-	}
-
-	async startCycle() {
-		await this.animationState.startCycle();
-	}
 
 	paint(grid: Grid = this.game.grid) {
 		const context = this.context;
@@ -98,47 +127,6 @@ export class CanvasManager {
 				this.paintTile({ context, cell });
 			}
 		}
-
-		context.restore();
-	}
-
-	async animationNewTile({ cell }: { cell: Cell }) {
-		const context = this.context;
-		if (!context) return;
-
-		context.save();
-
-		const x = cell.col * (this.cellSize + this.gapSize);
-		const y = cell.row * (this.cellSize + this.gapSize);
-
-		const frame = 0;
-
-		const animateFrame = async (frame: number) => {
-			if (frame >= ANIMATION_FRAME_COUNT) return;
-
-			const size = (this.cellSize * frame) / ANIMATION_FRAME_COUNT;
-			const offset = (this.cellSize - size) / 2;
-
-			context.save();
-
-			this.paintSquareBase({
-				context,
-				x: x + offset,
-				y: y + offset,
-				value: cell.content!.value,
-				cellSize: size
-			});
-			this.paintText({ context, x, y, value: cell.content!.value });
-
-			await new Promise((resolve) => setTimeout(resolve, 10));
-
-			context.restore();
-
-			await animateFrame(frame + 1);
-			console.log('animateFrame', frame);
-		};
-
-		await animateFrame(frame);
 
 		context.restore();
 	}

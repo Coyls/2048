@@ -44,15 +44,31 @@ export class Game {
 	}) {
 		this.gridRowsLength = gridRowsLength;
 		this.gridColsLength = gridColsLength;
-		this.grid = new Grid(this.gridRowsLength, this.gridColsLength);
-		this.grid.addRandomTile();
+
+		this.resetGrid();
+
 		this.keyManager = new KeyManager(this);
 		this.canvasManager = new CanvasManager(this, canvasSize);
 	}
 
+	/* setupAnimation(previousGridClone: Grid, newGridClone: Grid, newTile: Cell) {
+		this.dataForAnimation.previousGrid = previousGridClone;
+		this.dataForAnimation.currentGridBeforeAddingNewTile = newGridClone;
+		this.dataForAnimation.newTile = newTile;
+		this.dataForAnimation.currentGrid = newGridClone;
+	} */
+
+	private resetGrid() {
+		const newGrid = new Grid(this.gridRowsLength, this.gridColsLength);
+		this.dataForAnimation.previousGrid = newGrid.clone();
+		this.grid = newGrid;
+		this.dataForAnimation.currentGridBeforeAddingNewTile = this.grid.clone();
+		this.dataForAnimation.newTile = this.grid.addRandomTile();
+		this.dataForAnimation.currentGrid = this.grid.clone();
+	}
+
 	reset() {
-		this.grid = new Grid(this.gridRowsLength, this.gridColsLength);
-		this.grid.addRandomTile();
+		this.resetGrid();
 		this.score = 0;
 		this.isGameOver = false;
 		this.isGameWon = false;

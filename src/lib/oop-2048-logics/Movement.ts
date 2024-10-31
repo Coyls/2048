@@ -13,6 +13,8 @@ import { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import { Grid } from './Grid';
 
+export type MoveResult = { grid: Grid; score: number; animateAndUpdate: boolean };
+
 export class Movement {
 	direction: DirectionType;
 	tmpCells: Cell[] = [];
@@ -30,7 +32,7 @@ export class Movement {
 		this.tmpStartPosition = this.getStartPositionFromDirection();
 	}
 
-	move() {
+	move(): MoveResult {
 		this.createLoopLineFromDirection((index) => {
 			const line = this.getLineFromDirection({ index, grid: this.game.grid });
 
@@ -51,12 +53,13 @@ export class Movement {
 		updatedGrid.cleanCollidedCells();
 
 		if (Grid.areSameGrids(updatedGrid, this.game.grid)) {
-			return { grid: updatedGrid, score: this.tmpScore, newTile: null };
+			return { grid: updatedGrid, score: this.tmpScore, animateAndUpdate: false };
 		}
 
 		return {
 			grid: updatedGrid,
-			score: this.tmpScore
+			score: this.tmpScore,
+			animateAndUpdate: true
 		};
 	}
 
@@ -69,6 +72,7 @@ export class Movement {
 		while (this.whileCondition()) {
 			const currentCell = this.getCurrentCell(updatedLine);
 			if (!currentCell) return { newLine: updatedLine, newScore: this.tmpScore };
+
 			const nextCell = this.getNextCell(updatedLine, currentCell);
 			if (!nextCell) return { newLine: updatedLine, newScore: this.tmpScore };
 
