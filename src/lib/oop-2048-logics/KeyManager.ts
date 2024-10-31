@@ -34,14 +34,14 @@ export class KeyManager {
 
 	private onKeyUp = async (direction: DirectionType) => {
 		const movement = new Movement(this.game, direction);
-		const { grid, score, newTile } = movement.move();
+		const { grid, score } = movement.move();
+
+		this.game.dataForAnimation.previousGrid = this.game.grid.clone();
+		this.game.dataForAnimation.currentGridBeforeAddingNewTile = this.game.grid.clone();
+		this.game.dataForAnimation.newTile = grid.addRandomTile();
+		this.game.dataForAnimation.currentGrid = grid.clone();
+
 		this.game.score = score;
 		this.game.grid = grid;
-
-		this.game.canvasManager.startCycle();
-
-		if (newTile) {
-			await this.game.canvasManager.animationNewTile({ cell: newTile });
-		}
 	};
 }

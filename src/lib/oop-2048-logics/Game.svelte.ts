@@ -1,10 +1,18 @@
 import { CanvasManager } from './CanvasManager';
+import type { Cell } from './Cell';
 import type { CollisionType } from './Collision';
 import { Collision } from './Collision';
 import { Grid } from './Grid';
 import { KeyManager } from './KeyManager';
 
 export const WIN_CONDITION = 2048;
+
+interface DataForAnimation {
+	newTile: Cell | null;
+	previousGrid: Grid | null;
+	currentGridBeforeAddingNewTile: Grid | null;
+	currentGrid: Grid | null;
+}
 
 export class Game {
 	grid = $state(new Grid(4, 4));
@@ -18,6 +26,13 @@ export class Game {
 	gridRowsLength: number;
 	gridColsLength: number;
 
+	dataForAnimation: DataForAnimation = {
+		newTile: null,
+		previousGrid: null,
+		currentGridBeforeAddingNewTile: null,
+		currentGrid: null
+	};
+
 	constructor({
 		gridRowsLength,
 		gridColsLength,
@@ -30,12 +45,14 @@ export class Game {
 		this.gridRowsLength = gridRowsLength;
 		this.gridColsLength = gridColsLength;
 		this.grid = new Grid(this.gridRowsLength, this.gridColsLength);
+		this.grid.addRandomTile();
 		this.keyManager = new KeyManager(this);
 		this.canvasManager = new CanvasManager(this, canvasSize);
 	}
 
 	reset() {
 		this.grid = new Grid(this.gridRowsLength, this.gridColsLength);
+		this.grid.addRandomTile();
 		this.score = 0;
 		this.isGameOver = false;
 		this.isGameWon = false;

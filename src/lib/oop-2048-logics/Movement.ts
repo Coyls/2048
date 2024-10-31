@@ -54,12 +54,9 @@ export class Movement {
 			return { grid: updatedGrid, score: this.tmpScore, newTile: null };
 		}
 
-		const newTile = updatedGrid.addRandomValue();
-
 		return {
 			grid: updatedGrid,
-			score: this.tmpScore,
-			newTile: { ...newTile }
+			score: this.tmpScore
 		};
 	}
 

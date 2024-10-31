@@ -9,8 +9,7 @@ export class Grid {
 	constructor(gridRowsLength: number, gridColsLength: number) {
 		this.gridRowsLength = gridRowsLength;
 		this.gridColsLength = gridColsLength;
-		this.cells = this.initGrid(gridRowsLength, gridColsLength);
-		this.addRandomValue();
+		this.cells = this.initGridWithEmptyCells(gridRowsLength, gridColsLength);
 	}
 
 	static areSameGrids(grid1: Grid, grid2: Grid) {
@@ -20,7 +19,7 @@ export class Grid {
 		});
 	}
 
-	addRandomValue() {
+	addRandomTile() {
 		const emptyCells = this.cells.filter((cell) => cell.content === null);
 		const randomEmptyCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
 		randomEmptyCell.content = new Tile();
@@ -33,7 +32,13 @@ export class Grid {
 		}
 	}
 
-	private initGrid(gridRowsLength: number, gridColsLength: number) {
+	clone() {
+		const newClonedGrid = new Grid(this.gridRowsLength, this.gridColsLength);
+		newClonedGrid.cells = this.cells.map((cell) => new Cell(cell.row, cell.col, cell.content));
+		return newClonedGrid;
+	}
+
+	private initGridWithEmptyCells(gridRowsLength: number, gridColsLength: number) {
 		return Array.from({ length: gridRowsLength }, (_, row) =>
 			Array.from({ length: gridColsLength }, (_, col) => new Cell(row, col, null))
 		).flat();

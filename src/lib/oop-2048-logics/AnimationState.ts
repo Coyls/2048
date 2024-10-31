@@ -7,8 +7,8 @@ export class AnimationState {
 		this.canvasManager = canvasManager;
 	}
 
-	startCycle = () => {};
-	paintCanvas = () => {};
+	async startCycle() {}
+	async paintCanvas() {}
 }
 
 export class PaintingState extends AnimationState {
@@ -16,16 +16,15 @@ export class PaintingState extends AnimationState {
 		super(canvasManager);
 	}
 
-	startCycle = () => {
+	async startCycle() {
 		console.log('START');
-		console.log('PaintingState: startCycle');
-		this.canvasManager.setState(new MovingState(this.canvasManager));
-	};
+		console.log('PaintingState: startCycle | STEP 1');
+	}
 
-	paintCanvas = () => {
-		console.log('PaintingState: paintCanvas');
+	async paintCanvas() {
+		console.log('PaintingState: paintCanvas | STEP 4');
 		console.log('FINISH');
-	};
+	}
 }
 
 export class MovingState extends AnimationState {
@@ -33,12 +32,11 @@ export class MovingState extends AnimationState {
 		super(canvasManager);
 	}
 
-	startCycle = () => {};
+	async startCycle() {}
 
-	paintCanvas = () => {
-		console.log('MovingState: paintCanvas');
-		this.canvasManager.setState(new NewTileState(this.canvasManager));
-	};
+	async paintCanvas() {
+		console.log('MovingState: paintCanvas | STEP 2');
+	}
 }
 
 export class NewTileState extends AnimationState {
@@ -46,10 +44,16 @@ export class NewTileState extends AnimationState {
 		super(canvasManager);
 	}
 
-	startCycle = () => {};
+	async startCycle() {}
 
-	paintCanvas = () => {
-		console.log('NewTileState: paintCanvas');
-		this.canvasManager.setState(new PaintingState(this.canvasManager));
-	};
+	async paintCanvas() {
+		console.log('NewTileState: paintCanvas | STEP 3');
+		if (this.canvasManager.game.newTile) {
+			await this.canvasManager.animationNewTile({ cell: this.canvasManager.game.newTile });
+		}
+
+		this.canvasManager.game.newTile = null;
+
+		await this.canvasManager.setState(new PaintingState(this.canvasManager));
+	}
 }

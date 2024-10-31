@@ -10,16 +10,17 @@
 		canvasSize: MAX_CANVAS_SIZE
 	});
 
-	game.canvasManager.paint();
+	// game.canvasManager.paint();
 
-	const resetGame = () => {
+	const resetGame = async () => {
 		game.reset();
-		game.canvasManager.paint();
+		// game.canvasManager.paint();
+		await game.canvasManager.startCycle();
 	};
 
-	onMount(() => {
+	onMount(async () => {
 		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
-		game.canvasManager.paint();
+		await game.canvasManager.draw();
 	});
 
 	$effect(() => {
