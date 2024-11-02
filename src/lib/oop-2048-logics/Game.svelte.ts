@@ -6,7 +6,7 @@ import { Grid } from './Grid';
 import { KeyManager } from './KeyManager';
 
 // todo: move to config file
-export const WIN_CONDITION = 2048;
+export const WIN_CONDITION = 64;
 
 interface DataForAnimation {
 	newTile: Cell | null;
