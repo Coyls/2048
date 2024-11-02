@@ -1,5 +1,4 @@
-import { getCellColorViolet, TEXT_COLOR_VIOLET } from '$lib/2048-logics/cell-color';
-import { getCharacterSize } from '$lib/2048-logics/utils';
+import { getCellColorViolet, TEXT_COLOR_VIOLET } from '$lib/oop-2048-logics/cell-color';
 import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
@@ -288,7 +287,7 @@ export class CanvasManager {
 		context.fillStyle = TEXT_COLOR_VIOLET;
 		context.fillText(
 			value.toString(),
-			x + this.cellSize / 2 - (getCharacterSize(value) * FONT_SIZE_PX) / 4,
+			x + this.cellSize / 2 - (this.getCharacterSize(value) * FONT_SIZE_PX) / 4,
 			y + this.cellSize / 2 + FONT_SIZE_PX / 4
 		);
 	}
@@ -318,5 +317,9 @@ export class CanvasManager {
 		const gapSize = cellSize / 5;
 
 		return { cellSize, gapSize };
+	}
+
+	private getCharacterSize(value: number) {
+		return value.toString().split('').length;
 	}
 }

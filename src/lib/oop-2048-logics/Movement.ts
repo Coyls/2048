@@ -1,10 +1,9 @@
-import {
-	GRID_COLS_LENGTH,
-	GRID_ROWS_LENGTH,
-	MAX_COL_INDEX,
-	MAX_ROW_INDEX
-} from '../2048-logics/base';
 import { Collision } from './Collision';
+
+export const GRID_ROWS_LENGTH = 4;
+export const GRID_COLS_LENGTH = 4;
+export const MAX_ROW_INDEX = GRID_ROWS_LENGTH - 1;
+export const MAX_COL_INDEX = GRID_COLS_LENGTH - 1;
 
 export const directionTypes = ['top', 'bottom', 'left', 'right'] as const;
 export type DirectionType = (typeof directionTypes)[number];
