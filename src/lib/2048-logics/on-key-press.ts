@@ -1,5 +1,5 @@
 import type { Grid } from './base';
-import { moveToBottom, moveToLeft, moveToRight, moveToTop } from './move';
+import { move } from './move';
 
 export const onKeyPress = ({
 	event,
@@ -14,13 +14,13 @@ export const onKeyPress = ({
 
 	switch (key) {
 		case 'ArrowUp':
-			return moveToTop(grid, score);
+			return move(grid, score, 'top');
 		case 'ArrowDown':
-			return moveToBottom(grid, score);
+			return move(grid, score, 'bottom');
 		case 'ArrowLeft':
-			return moveToLeft(grid, score);
+			return move(grid, score, 'left');
 		case 'ArrowRight':
-			return moveToRight(grid, score);
+			return move(grid, score, 'right');
 		default:
 			return { grid, score };
 	}

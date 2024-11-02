@@ -4,102 +4,21 @@ import { colide } from './collision';
 import { addRandomValue } from './random-value';
 import { cleanCollidedCells, type DirectionType } from './utils';
 
-export const moveToTop = (grid: Grid, score: number) => {
+export const move = (grid: Grid, score: number, direction: DirectionType) => {
 	const updatedGrid: Cell[] = [];
 	let tmpScore = score;
-	for (let i = 0; i < GRID_COLS_LENGTH; i++) {
-		const line = grid.filter((cell) => cell.col === i);
+	createLoopLineFromDirection(direction, (index) => {
+		const line = getLineFromDirection({ index, direction, grid });
 
 		const updatedLine = recursiveMovementLine({
-			line: line,
-			direction: 'top',
-			startPosition: getStartPosition('top'),
+			line,
+			direction,
+			startPosition: getStartPositionFromDirection(direction),
 			score: tmpScore
 		});
 		updatedGrid.push(...updatedLine.newLine);
 		tmpScore = updatedLine.newScore;
-	}
-
-	const cleanedGrid = cleanCollidedCells(updatedGrid);
-
-	if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
-
-	return {
-		grid: addRandomValue(cleanedGrid),
-		score: tmpScore
-	};
-};
-
-export const moveToBottom = (grid: Grid, score: number) => {
-	const updatedGrid: Cell[] = [];
-	let tmpScore = score;
-	for (let i = MAX_COL_INDEX; i >= 0; i--) {
-		const line = grid.filter((cell) => cell.col === i);
-		console.log('line:', line);
-
-		const updatedLine = recursiveMovementLine({
-			line: line,
-			direction: 'bottom',
-			startPosition: getStartPosition('bottom'),
-			score: tmpScore
-		});
-
-		console.log('updatedLine:', updatedLine.newLine);
-		updatedGrid.push(...updatedLine.newLine);
-		tmpScore = updatedLine.newScore;
-	}
-
-	const cleanedGrid = cleanCollidedCells(updatedGrid);
-
-	if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
-
-	return {
-		grid: addRandomValue(cleanedGrid),
-		score: tmpScore
-	};
-};
-
-export const moveToLeft = (grid: Grid, score: number) => {
-	const updatedGrid: Cell[] = [];
-	let tmpScore = score;
-	for (let i = 0; i < GRID_COLS_LENGTH; i++) {
-		const line = grid.filter((cell) => cell.row === i);
-
-		const updatedLine = recursiveMovementLine({
-			line: line,
-			direction: 'left',
-			startPosition: getStartPosition('left'),
-			score: tmpScore
-		});
-		updatedGrid.push(...updatedLine.newLine);
-		tmpScore = updatedLine.newScore;
-	}
-
-	const cleanedGrid = cleanCollidedCells(updatedGrid);
-
-	if (areSameGrids(cleanedGrid, grid)) return { grid: cleanedGrid, score: tmpScore };
-
-	return {
-		grid: addRandomValue(cleanedGrid),
-		score: tmpScore
-	};
-};
-
-export const moveToRight = (grid: Grid, score: number) => {
-	const updatedGrid: Cell[] = [];
-	let tmpScore = score;
-	for (let i = MAX_COL_INDEX; i >= 0; i--) {
-		const line = grid.filter((cell) => cell.row === i);
-
-		const updatedLine = recursiveMovementLine({
-			line: line,
-			direction: 'right',
-			startPosition: getStartPosition('right'),
-			score: tmpScore
-		});
-		updatedGrid.push(...updatedLine.newLine);
-		tmpScore = updatedLine.newScore;
-	}
+	});
 
 	const cleanedGrid = cleanCollidedCells(updatedGrid);
 
@@ -189,7 +108,7 @@ export const recursiveMovementLine = ({
 	});
 };
 
-export const getStartPosition = (direction: DirectionType): number => {
+export const getStartPositionFromDirection = (direction: DirectionType): number => {
 	switch (direction) {
 		case 'top':
 			return 0;
@@ -294,5 +213,54 @@ export const whileCondition = (startPosition: number, direction: DirectionType) 
 			return startPosition <= MAX_COL_INDEX;
 		default:
 			return false;
+	}
+};
+
+export const getLineFromDirection = ({
+	index,
+	direction,
+	grid
+}: {
+	index: number;
+	direction: DirectionType;
+	grid: Grid;
+}) => {
+	switch (direction) {
+		case 'top':
+			return grid.filter((cell) => cell.col === index);
+		case 'bottom':
+			return grid.filter((cell) => cell.col === index);
+		case 'left':
+			return grid.filter((cell) => cell.row === index);
+		case 'right':
+			return grid.filter((cell) => cell.row === index);
+	}
+};
+
+export const createLoopLineFromDirection = (
+	direction: DirectionType,
+	callBack: (index: number) => void
+) => {
+	switch (direction) {
+		case 'top':
+			for (let i = 0; i < GRID_COLS_LENGTH; i++) {
+				callBack(i);
+			}
+			break;
+		case 'bottom':
+			for (let i = MAX_COL_INDEX; i >= 0; i--) {
+				callBack(i);
+			}
+			break;
+		case 'left':
+			for (let i = 0; i < GRID_COLS_LENGTH; i++) {
+				callBack(i);
+			}
+			break;
+		case 'right':
+			for (let i = MAX_COL_INDEX; i >= 0; i--) {
+				callBack(i);
+			}
+			break;
 	}
 };

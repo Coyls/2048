@@ -29,15 +29,18 @@
 	};
 
 	$effect(() => {
-		window.addEventListener('keyup', (event) => {
+		const handleKeyUp = (event: KeyboardEvent) => {
 			const result = onKeyPress({ event, grid, score });
 			prevGrid = grid;
 			grid = result.grid;
 			score = result.score;
+		};
 
-			isGameOver = calculateIfGameIsOver(grid);
-			isGameWon = calculateIfGameIsWon(grid);
-		});
+		window.addEventListener('keyup', handleKeyUp);
+
+		return () => {
+			window.removeEventListener('keyup', handleKeyUp);
+		};
 	});
 
 	$effect(() => {
