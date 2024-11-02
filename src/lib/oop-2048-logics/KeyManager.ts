@@ -46,6 +46,6 @@ export class KeyManager {
 		this.game.score = score;
 		this.game.grid = grid;
 
-		await this.game.canvasManager.draw(animateAndUpdate);
+		await this.game.canvasManager.draw(animateAndUpdate, direction);
 	};
 }
