@@ -1,48 +1,60 @@
 <script lang="ts">
-	import { getCellAndGapSize, GRID_BASE, MAX_CANVAS_SIZE } from '$lib/2048-logics/base';
-	import { onKeyPress } from '$lib/2048-logics/on-key-press';
-	import { paint } from '$lib/2048-logics/paint';
-	import { addRandomValue } from '$lib/2048-logics/random-value';
+	import { Game } from '$lib/oop-2048-logics/Game.svelte';
+	import { RotateCcw } from 'lucide-svelte';
+	import { onMount } from 'svelte';
 
-	let grid = $state(addRandomValue(GRID_BASE));
-	let canvas: HTMLCanvasElement;
+	export const MAX_CANVAS_SIZE = 500;
 
-	let isGameOver = $state(false);
-	let isGameWon = $state(false);
+	const game = new Game({
+		gridRowsLength: 4,
+		gridColsLength: 4,
+		canvasSize: MAX_CANVAS_SIZE
+	});
 
-	$effect(() => {
-		window.addEventListener('keydown', (event) => {
-			grid = onKeyPress(event, grid);
-		});
+	const resetGame = async () => {
+		game.reset();
+		await game.canvasManager.draw();
+	};
+
+	onMount(async () => {
+		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
+		await game.canvasManager.draw();
 	});
 
 	$effect(() => {
-		const context = canvas.getContext('2d');
-		if (!context) return;
+		const handleKeyUp = async (event: KeyboardEvent) => {
+			await game.keyManager.handleKeyUp(event);
+		};
 
-		const { CELL_SIZE, GAP_SIZE } = getCellAndGapSize(canvas.width);
+		window.addEventListener('keyup', handleKeyUp);
 
-		const result = paint({ context, grid, CELL_SIZE, GAP_SIZE });
-
-		isGameOver = result.isGameOver;
-		isGameWon = result.isGameWon;
+		return () => {
+			window.removeEventListener('keyup', handleKeyUp);
+		};
 	});
 </script>
 
-<canvas
-	class=" border-[16px] border-gray-300"
-	bind:this={canvas}
-	width={MAX_CANVAS_SIZE}
-	height={MAX_CANVAS_SIZE}
-></canvas>
+<main class="mx-auto flex min-h-screen max-w-[500px] flex-col items-center justify-center gap-4">
+	<h1 class="text-6xl font-bold">2048</h1>
+	<div class="flex w-full flex-row items-center justify-between gap-4">
+		<div class="text-4xl">Score: <span class="font-bold"> {game.score}</span></div>
+		<button onclick={resetGame} class="rounded-md p-2"><RotateCcw /></button>
+	</div>
 
-{#if isGameOver}
+	<canvas
+		bind:this={game.canvasManager.canvas}
+		width={game.canvasManager.canvasSize}
+		height={game.canvasManager.canvasSize}
+	></canvas>
+</main>
+
+{#if game.isGameOver}
 	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
 		<h1 class="text-4xl text-white">Game Over</h1>
 	</div>
 {/if}
 
-{#if isGameWon}
+{#if game.isGameWon}
 	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
 		<h1 class="text-4xl text-white">Game Won</h1>
 	</div>
