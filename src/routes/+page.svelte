@@ -39,9 +39,9 @@
 <main class="mx-auto flex min-h-screen max-w-[500px] flex-col items-center justify-center gap-4">
 	<h1 class="text-6xl font-bold">2048</h1>
 	<div class="flex w-full flex-row items-center justify-between gap-4">
-		<div class="text-4xl">Score: <span class="font-bold"> {game.score}</span></div>
-		<Button size="icon" class="rounded-md p-2" onclick={resetGame} variant="outline"
-			><RotateCcw /></Button
+		<div class="text-3xl">Score: <span class="font-bold">{game.score}</span></div>
+		<Button size="icon" onclick={resetGame} variant="ghost"
+			><RotateCcw size={24} class="text-primary" /></Button
 		>
 	</div>
 
@@ -58,4 +58,4 @@
 	</div>
 {/if}
 
-<WinDialog onResetGame={resetGame} open={game.isGameWon} />
+<WinDialog onResetGame={resetGame} onContinueGame={game.continueGame} open={game.isGameWon} />

@@ -6,7 +6,7 @@ import { Grid } from './Grid';
 import { KeyManager } from './KeyManager';
 
 // todo: move to config file
-export const WIN_CONDITION = 64;
+export const WIN_CONDITION = 16;
 
 interface DataForAnimation {
 	newTile: Cell | null;
@@ -21,6 +21,7 @@ export class Game {
 	score = $state(0);
 	isGameOver = $state(false);
 	isGameWon = $state(false);
+	isGameContinue = $state(false);
 
 	keyManager: KeyManager;
 	canvasManager: CanvasManager;
@@ -69,7 +70,13 @@ export class Game {
 		this.isGameWon = false;
 	}
 
+	continueGame() {
+		this.isGameContinue = true;
+	}
+
 	checkIfGameIsWon() {
+		if (this.isGameContinue) return;
+
 		const gameIsWon = this.grid.cells.some((cell) => cell.content?.value === WIN_CONDITION);
 
 		this.isGameWon = gameIsWon;

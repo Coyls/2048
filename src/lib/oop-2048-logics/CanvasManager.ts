@@ -1,4 +1,4 @@
-import { getCellColorViolet, TEXT_COLOR_VIOLET } from '$lib/oop-2048-logics/cell-color';
+import { getCellColorBougie, TEXT_COLOR_BOUJIE } from '$lib/oop-2048-logics/cell-color';
 import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
@@ -284,7 +284,7 @@ export class CanvasManager {
 		y: number;
 		value: number;
 	}) {
-		context.fillStyle = TEXT_COLOR_VIOLET;
+		context.fillStyle = TEXT_COLOR_BOUJIE;
 		context.fillText(
 			value.toString(),
 			x + this.cellSize / 2 - (this.getCharacterSize(value) * FONT_SIZE_PX) / 4,
@@ -305,7 +305,7 @@ export class CanvasManager {
 		cellSize: number;
 		value: number;
 	}) {
-		const cellColor = getCellColorViolet(value);
+		const cellColor = getCellColorBougie(value);
 		context.fillStyle = cellColor;
 		context.beginPath();
 		context.roundRect(x, y, cellSize, cellSize, 10);

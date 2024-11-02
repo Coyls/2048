@@ -3,12 +3,17 @@
 
 	let {
 		open = $bindable(false),
-		onResetGame
-	}: { open: boolean; onResetGame: () => Promise<void> } = $props();
+		onResetGame,
+		onContinueGame
+	}: {
+		open: boolean;
+		onResetGame: () => Promise<void>;
+		onContinueGame: () => void;
+	} = $props();
 </script>
 
 <AlertDialog.Root {open}>
-	<AlertDialog.Content>
+	<AlertDialog.Content class="border-primary">
 		<AlertDialog.Header>
 			<AlertDialog.Title>Gagné !</AlertDialog.Title>
 			<AlertDialog.Description>
@@ -22,7 +27,12 @@
 					open = false;
 				}}>Recommencer</AlertDialog.Cancel
 			>
-			<AlertDialog.Action onclick={() => (open = false)}>Continuer</AlertDialog.Action>
+			<AlertDialog.Action
+				onclick={() => {
+					onContinueGame();
+					open = false;
+				}}>Continuer</AlertDialog.Action
+			>
 		</AlertDialog.Footer>
 	</AlertDialog.Content>
 </AlertDialog.Root>
