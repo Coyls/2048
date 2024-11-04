@@ -13,7 +13,7 @@ const FONT_FAMILY = 'arial';
 const FONT_WEIGHT = 'bold';
 const CANVAS_FONT = `${FONT_WEIGHT} ${FONT_SIZE_PX}px ${FONT_FAMILY}`;
 const FRAME_DELAY_MOVEMENT_MS = 1;
-const FRAME_DELAY_APPARITION_MS = 10;
+const FRAME_DELAY_APPARITION_MS = 7;
 const EMPTY_CELL_VALUE = 0;
 
 type TilePositions = {
@@ -29,18 +29,25 @@ type Position = { x: number; y: number };
 
 export class CanvasManager {
 	canvas: HTMLCanvasElement | null = null;
-	canvasSize: number;
+	canvasSize = $state(0);
 	context: CanvasRenderingContext2D | null = null;
 	cellSize: number;
 	gapSize: number;
 	game: Game;
 
 	constructor(game: Game, canvasSize: number) {
-		this.canvasSize = canvasSize;
 		const { cellSize, gapSize } = this.getCellAndGapSize(canvasSize);
+		this.canvasSize = canvasSize;
 		this.cellSize = cellSize;
 		this.gapSize = gapSize;
 		this.game = game;
+	}
+
+	onResize(canvasSize: number) {
+		const { cellSize, gapSize } = this.getCellAndGapSize(canvasSize);
+		this.canvasSize = canvasSize;
+		this.cellSize = cellSize;
+		this.gapSize = gapSize;
 	}
 
 	async draw(animate: boolean = true, direction: DirectionType | null = null) {

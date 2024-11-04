@@ -1,11 +1,13 @@
 <script lang="ts">
 	import { Game } from '$lib/oop-2048-logics/Game.svelte';
 	import { WinDialog } from '@/lib/components/2048';
+	import LooseDialog from '@/lib/components/2048/loose-dialog.svelte';
 	import { Button } from '@/lib/components/ui/button';
 	import { RotateCcw } from 'lucide-svelte';
 	import { onMount } from 'svelte';
 
 	export const MAX_CANVAS_SIZE = 500;
+	export const OFFSET_CANVAS_SIZE = 32;
 
 	const game = new Game({
 		gridRowsLength: 4,
@@ -18,9 +20,30 @@
 		await game.canvasManager.draw();
 	};
 
+	const setCanvasSize = async () => {
+		game.canvasManager.onResize(
+			window.screen.width < MAX_CANVAS_SIZE
+				? window.screen.width - OFFSET_CANVAS_SIZE
+				: MAX_CANVAS_SIZE
+		);
+		await game.canvasManager.draw();
+	};
+
 	onMount(async () => {
 		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
+		await setCanvasSize();
 		await game.canvasManager.draw();
+	});
+
+	$effect(() => {
+		const handleResize = async () => {
+			await setCanvasSize();
+		};
+
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
 	});
 
 	$effect(() => {
@@ -38,11 +61,11 @@
 
 <main class="mx-auto flex min-h-screen max-w-[500px] flex-col items-center justify-center gap-4">
 	<h1 class="text-6xl font-bold">2048</h1>
-	<div class="flex w-full flex-row items-center justify-between gap-4">
-		<div class="text-3xl">Score: <span class="font-bold">{game.score}</span></div>
-		<Button size="icon" onclick={resetGame} variant="ghost"
-			><RotateCcw size={24} class="text-primary" /></Button
-		>
+	<div class="flex w-full flex-row items-center justify-between gap-4 px-4 md:px-0">
+		<div class=" text-3xl">Score: <span class="font-bold">{game.score}</span></div>
+		<Button size="icon" onclick={resetGame} variant="ghost" class="px-0">
+			<RotateCcw size={24} class="text-primary" />
+		</Button>
 	</div>
 
 	<canvas
@@ -59,3 +82,4 @@
 {/if}
 
 <WinDialog onResetGame={resetGame} onContinueGame={game.continueGame} open={game.isGameWon} />
+<LooseDialog onResetGame={resetGame} open={game.isGameOver} />

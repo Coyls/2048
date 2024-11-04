@@ -1,4 +1,4 @@
-import { CanvasManager } from './CanvasManager';
+import { CanvasManager } from './CanvasManager.svelte';
 import type { Cell } from './Cell';
 import type { CollisionType } from './Collision';
 import { Collision } from './Collision';
@@ -6,7 +6,7 @@ import { Grid } from './Grid';
 import { KeyManager } from './KeyManager';
 
 // todo: move to config file
-export const WIN_CONDITION = 16;
+export const WIN_CONDITION = 2048;
 
 interface DataForAnimation {
 	newTile: Cell | null;
