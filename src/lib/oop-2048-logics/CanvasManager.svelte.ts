@@ -1,4 +1,4 @@
-import { getCellColorBougie, TEXT_COLOR_BOUJIE } from '$lib/oop-2048-logics/cell-color';
+import { getCellColorBougie, getTextColorBougie } from '$lib/oop-2048-logics/cell-color';
 import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
@@ -10,7 +10,7 @@ const ANIMATION_FRAME_COUNT = 30;
 const STARTING_FRAME = 0;
 const FRAME_STEP = 1;
 const FONT_SIZE_PX = 32;
-const FONT_FAMILY = 'arial';
+const FONT_FAMILY = 'poppins';
 const FONT_WEIGHT = 'bold';
 const FRAME_DELAY_MOVEMENT_MS = 1;
 const FRAME_DELAY_APPARITION_MS = 7;
@@ -294,7 +294,7 @@ export class CanvasManager {
 		y: number;
 		value: number;
 	}) {
-		context.fillStyle = TEXT_COLOR_BOUJIE;
+		context.fillStyle = getTextColorBougie(value);
 		context.fillText(
 			value.toString(),
 			x + this.cellSize / 2 - (this.getCharacterSize(value) * this.fontSizePx) / 4,

@@ -61,6 +61,7 @@
 
 	$effect(() => {
 		const handleResize = async () => {
+			if (window.screen.width >= MAX_CANVAS_SIZE) return;
 			await setCanvasSize();
 		};
 
