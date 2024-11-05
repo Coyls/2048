@@ -3,10 +3,10 @@
 	import { WinDialog } from '@/lib/components/2048';
 	import LooseDialog from '@/lib/components/2048/loose-dialog.svelte';
 	import { Button } from '@/lib/components/ui/button';
+	import { MAX_CANVAS_SIZE } from '@/lib/oop-2048-logics/CanvasManager.svelte';
 	import type { SwipeDirection } from '@/lib/oop-2048-logics/KeyManager';
 	import { RotateCcw } from 'lucide-svelte';
 	import { onMount } from 'svelte';
-	import { MAX_CANVAS_SIZE } from '@/lib/oop-2048-logics/CanvasManager.svelte';
 
 	// l'angoisse !!
 	if (typeof window !== 'undefined') {
@@ -45,7 +45,6 @@
 	onMount(async () => {
 		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
 		await setCanvasSize();
-		await game.canvasManager.draw();
 	});
 
 	$effect(() => {
@@ -84,7 +83,7 @@
 	});
 </script>
 
-<main class="mx-auto flex min-h-screen max-w-[500px] flex-col items-center justify-center gap-4">
+<main class="mx-auto flex min-h-svh max-w-[500px] flex-col items-center justify-center gap-4">
 	<h1 class="text-6xl font-bold">2048</h1>
 	<div class="flex w-full flex-row items-center justify-between gap-4 px-4 md:px-0">
 		<div class=" text-3xl">Score: <span class="font-bold">{game.score}</span></div>
