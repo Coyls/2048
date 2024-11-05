@@ -1,4 +1,4 @@
-import { getCellColorBougie, TEXT_COLOR_BOUJIE } from '$lib/oop-2048-logics/cell-color';
+import { getCellColorBougie, getTextColorBougie } from '$lib/oop-2048-logics/cell-color';
 import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
@@ -294,7 +294,7 @@ export class CanvasManager {
 		y: number;
 		value: number;
 	}) {
-		context.fillStyle = TEXT_COLOR_BOUJIE;
+		context.fillStyle = getTextColorBougie(value);
 		context.fillText(
 			value.toString(),
 			x + this.cellSize / 2 - (this.getCharacterSize(value) * this.fontSizePx) / 4,
