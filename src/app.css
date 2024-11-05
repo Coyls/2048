@@ -1,31 +1,95 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-body {
-  /* Crée un dégradé de fond sombre et violet */
-  background: linear-gradient(135deg, #2b213d, #1a1a27 40%, #3a2856);
-  /* Ajuste la hauteur et le positionnement */
-  min-height: 100vh;
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #ffffff;
-  font-family: 'Arial', sans-serif;
+:root {
+  font-size: 16px;
 }
 
-/* Ajout de textures subtiles pour le fond */
-body::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-    radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
-  background-size: 80px 80px, 100px 100px;
-  opacity: 0.2;
-  pointer-events: none;
+@layer base {
+  :root {
+    --background: 0 0% 90%;
+    --foreground: 0 0% 7%;
+    --card: 0 0% 90%;
+    --card-foreground: 0 0% 7%;
+    --popover: 0 0% 90%;
+    --popover-foreground: 0 0% 7%;
+    --primary: 32 100% 35%;
+    --primary-foreground: 0 0% 90%;
+    --secondary: 27 59% 66%;
+    --secondary-foreground: 0 0% 7%;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 22 73% 51%;
+    --accent-foreground: 0 0% 7%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 7%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 22 73% 40%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 10%;
+    --foreground: 0 0% 93%;
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 93%;
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 93%;
+    --primary: 32 100% 65%;
+    --primary-foreground: 0 0% 10%;
+    --secondary: 27 59% 34%;
+    --secondary-foreground: 0 0% 93%;
+    --muted: 0 0% 80%;
+    --muted-foreground: 0 0% 93%;
+    --accent: 22 73% 49%;
+    --accent-foreground: 0 0% 10%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 10%;
+    --border: 0 0% 60%;
+    --input: 0 0% 80%;
+    --ring: 22 73% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Perfect Fourth : 1.333 */
+  h1 {
+    @apply font-caption text-4xl;
+  }
+
+  h2 {
+    @apply font-caption text-3xl;
+  }
+
+  h3 {
+    @apply font-caption text-2xl;
+  }
+
+  h4 {
+    @apply font-caption text-xl;
+  }
+
+  h5 {
+    @apply font-caption text-lg;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
 }

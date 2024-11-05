@@ -1,4 +1,4 @@
-import { CanvasManager } from './CanvasManager';
+import { CanvasManager } from './CanvasManager.svelte';
 import type { Cell } from './Cell';
 import type { CollisionType } from './Collision';
 import { Collision } from './Collision';
@@ -21,6 +21,7 @@ export class Game {
 	score = $state(0);
 	isGameOver = $state(false);
 	isGameWon = $state(false);
+	isGameContinue = $state(false);
 
 	keyManager: KeyManager;
 	canvasManager: CanvasManager;
@@ -69,7 +70,13 @@ export class Game {
 		this.isGameWon = false;
 	}
 
+	continueGame() {
+		this.isGameContinue = true;
+	}
+
 	checkIfGameIsWon() {
+		if (this.isGameContinue) return;
+
 		const gameIsWon = this.grid.cells.some((cell) => cell.content?.value === WIN_CONDITION);
 
 		this.isGameWon = gameIsWon;
