@@ -67,8 +67,9 @@ const config: Config = {
 				sm: 'calc(var(--radius) - 4px)'
 			},
 			fontFamily: {
-				caption: [...fontFamily.sans],
-				sans: [...fontFamily.sans]
+				// caption: [...fontFamily.sans],
+				sans: ['Poppins', ...fontFamily.sans],
+				caption: ['Questrial', ...fontFamily.sans]
 			},
 
 			fontSize: {
