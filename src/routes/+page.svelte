@@ -1,9 +1,26 @@
 <script lang="ts">
 	import { Game } from '$lib/oop-2048-logics/Game.svelte';
+	import { WinDialog } from '@/lib/components/2048';
+	import LooseDialog from '@/lib/components/2048/loose-dialog.svelte';
+	import { Button } from '@/lib/components/ui/button';
+	import type { SwipeDirection } from '@/lib/oop-2048-logics/KeyManager';
 	import { RotateCcw } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { MAX_CANVAS_SIZE } from '@/lib/oop-2048-logics/CanvasManager.svelte';
 
-	export const MAX_CANVAS_SIZE = 500;
+	// l'angoisse !!
+	if (typeof window !== 'undefined') {
+		import('swiped-events');
+	}
+
+	// ! La lib utiliser pour les swipe n'est pas typée
+	type CustomEvent = Event & {
+		detail: {
+			dir: SwipeDirection;
+		};
+	};
+
+	export const OFFSET_CANVAS_SIZE = 32;
 
 	const game = new Game({
 		gridRowsLength: 4,
@@ -16,9 +33,42 @@
 		await game.canvasManager.draw();
 	};
 
+	const setCanvasSize = async () => {
+		game.canvasManager.onResize(
+			window.screen.width < MAX_CANVAS_SIZE
+				? window.screen.width - OFFSET_CANVAS_SIZE
+				: MAX_CANVAS_SIZE
+		);
+		await game.canvasManager.draw();
+	};
+
 	onMount(async () => {
 		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
+		await setCanvasSize();
 		await game.canvasManager.draw();
+	});
+
+	$effect(() => {
+		const handleSwipe = (event: Event) => {
+			const customEvent = event as CustomEvent;
+			game.keyManager.handleSwipe(customEvent.detail.dir);
+		};
+
+		document.addEventListener('swiped', handleSwipe);
+		return () => {
+			document.removeEventListener('swiped', handleSwipe);
+		};
+	});
+
+	$effect(() => {
+		const handleResize = async () => {
+			await setCanvasSize();
+		};
+
+		window.addEventListener('resize', handleResize);
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
 	});
 
 	$effect(() => {
@@ -36,9 +86,11 @@
 
 <main class="mx-auto flex min-h-screen max-w-[500px] flex-col items-center justify-center gap-4">
 	<h1 class="text-6xl font-bold">2048</h1>
-	<div class="flex w-full flex-row items-center justify-between gap-4">
-		<div class="text-4xl">Score: <span class="font-bold"> {game.score}</span></div>
-		<button onclick={resetGame} class="rounded-md p-2"><RotateCcw /></button>
+	<div class="flex w-full flex-row items-center justify-between gap-4 px-4 md:px-0">
+		<div class=" text-3xl">Score: <span class="font-bold">{game.score}</span></div>
+		<Button size="icon" onclick={resetGame} variant="ghost" class="px-0">
+			<RotateCcw size={24} class="text-primary" />
+		</Button>
 	</div>
 
 	<canvas
@@ -54,8 +106,5 @@
 	</div>
 {/if}
 
-{#if game.isGameWon}
-	<div class="absolute left-0 top-0 h-full w-full bg-black/50">
-		<h1 class="text-4xl text-white">Game Won</h1>
-	</div>
-{/if}
+<WinDialog onResetGame={resetGame} onContinueGame={game.continueGame} open={game.isGameWon} />
+<LooseDialog onResetGame={resetGame} open={game.isGameOver} />

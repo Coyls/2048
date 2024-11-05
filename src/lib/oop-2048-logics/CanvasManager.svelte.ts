@@ -1,19 +1,19 @@
-import { getCellColorViolet, TEXT_COLOR_VIOLET } from '$lib/oop-2048-logics/cell-color';
+import { getCellColorBougie, TEXT_COLOR_BOUJIE } from '$lib/oop-2048-logics/cell-color';
 import type { Cell } from './Cell';
 import type { Game } from './Game.svelte';
 import type { Grid } from './Grid';
 import type { DirectionType } from './Movement';
 
 // todo: move to config file
+export const MAX_CANVAS_SIZE = 500;
 const ANIMATION_FRAME_COUNT = 30;
 const STARTING_FRAME = 0;
 const FRAME_STEP = 1;
 const FONT_SIZE_PX = 32;
 const FONT_FAMILY = 'arial';
 const FONT_WEIGHT = 'bold';
-const CANVAS_FONT = `${FONT_WEIGHT} ${FONT_SIZE_PX}px ${FONT_FAMILY}`;
 const FRAME_DELAY_MOVEMENT_MS = 1;
-const FRAME_DELAY_APPARITION_MS = 10;
+const FRAME_DELAY_APPARITION_MS = 7;
 const EMPTY_CELL_VALUE = 0;
 
 type TilePositions = {
@@ -29,24 +29,34 @@ type Position = { x: number; y: number };
 
 export class CanvasManager {
 	canvas: HTMLCanvasElement | null = null;
-	canvasSize: number;
+	canvasSize = $state(0);
 	context: CanvasRenderingContext2D | null = null;
 	cellSize: number;
 	gapSize: number;
+	fontSizePx: number;
 	game: Game;
 
 	constructor(game: Game, canvasSize: number) {
-		this.canvasSize = canvasSize;
 		const { cellSize, gapSize } = this.getCellAndGapSize(canvasSize);
+		this.canvasSize = canvasSize;
 		this.cellSize = cellSize;
 		this.gapSize = gapSize;
 		this.game = game;
+		this.fontSizePx = (FONT_SIZE_PX * canvasSize) / MAX_CANVAS_SIZE;
+	}
+
+	onResize(canvasSize: number) {
+		const { cellSize, gapSize } = this.getCellAndGapSize(canvasSize);
+		this.canvasSize = canvasSize;
+		this.cellSize = cellSize;
+		this.gapSize = gapSize;
+		this.fontSizePx = (FONT_SIZE_PX * this.canvasSize) / MAX_CANVAS_SIZE;
 	}
 
 	async draw(animate: boolean = true, direction: DirectionType | null = null) {
 		const context = this.context;
 		if (!context) return;
-		context.font = CANVAS_FONT;
+		context.font = this.getCanvasFont();
 
 		this.clearCanvas(context);
 		this.paintEmptyCells(context);
@@ -210,7 +220,7 @@ export class CanvasManager {
 
 		this.cleanCanvas();
 
-		context.font = CANVAS_FONT;
+		context.font = this.getCanvasFont();
 
 		for (let i = 0; i < this.game.gridRowsLength; i++) {
 			for (let j = 0; j < this.game.gridColsLength; j++) {
@@ -284,11 +294,11 @@ export class CanvasManager {
 		y: number;
 		value: number;
 	}) {
-		context.fillStyle = TEXT_COLOR_VIOLET;
+		context.fillStyle = TEXT_COLOR_BOUJIE;
 		context.fillText(
 			value.toString(),
-			x + this.cellSize / 2 - (this.getCharacterSize(value) * FONT_SIZE_PX) / 4,
-			y + this.cellSize / 2 + FONT_SIZE_PX / 4
+			x + this.cellSize / 2 - (this.getCharacterSize(value) * this.fontSizePx) / 4,
+			y + this.cellSize / 2 + this.fontSizePx / 4
 		);
 	}
 
@@ -305,7 +315,7 @@ export class CanvasManager {
 		cellSize: number;
 		value: number;
 	}) {
-		const cellColor = getCellColorViolet(value);
+		const cellColor = getCellColorBougie(value);
 		context.fillStyle = cellColor;
 		context.beginPath();
 		context.roundRect(x, y, cellSize, cellSize, 10);
@@ -321,5 +331,9 @@ export class CanvasManager {
 
 	private getCharacterSize(value: number) {
 		return value.toString().split('').length;
+	}
+
+	private getCanvasFont() {
+		return `${FONT_WEIGHT} ${this.fontSizePx}px ${FONT_FAMILY}`;
 	}
 }

@@ -62,3 +62,36 @@ export const getCellColorViolet = (value: number): string => {
 			return '#2e1b3c'; // Couleur sombre par défaut pour les valeurs supérieures à 2048
 	}
 };
+
+export const TEXT_COLOR_BOUJIE = '#ededed';
+
+export const getCellColorBougie = (value: number): string => {
+	switch (value) {
+		case 0: // Couleur de la cellule lorsque celle-ci est vide
+			return '#333333';
+		case 2:
+			return '#8a5224'; // secondary
+		case 4:
+			return '#d86522'; // accent
+		case 8:
+			return '#ffac4d'; // primary
+		case 16:
+			return '#ff9e3d';
+		case 32:
+			return '#ff8f2d';
+		case 64:
+			return '#ff7f1e';
+		case 128:
+			return '#ffd488';
+		case 256:
+			return '#ffdb9a';
+		case 512:
+			return '#ffe3ac';
+		case 1024:
+			return '#ffebbf';
+		case 2048:
+			return '#fff3d1';
+		default:
+			return '#cdc1b4'; // Default fallback color
+	}
+};
