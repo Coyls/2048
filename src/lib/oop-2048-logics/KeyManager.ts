@@ -1,8 +1,36 @@
 import type { Game } from './Game.svelte';
 import { Movement, type DirectionType } from './Movement';
 
+export type SwipeDirection = 'up' | 'down' | 'left' | 'right';
+
 export class KeyManager {
 	constructor(private game: Game) {}
+
+	async handleSwipe(direction: SwipeDirection) {
+		switch (direction) {
+			case 'up': {
+				await this.onKeyUp('top');
+				break;
+			}
+			case 'down': {
+				await this.onKeyUp('bottom');
+				break;
+			}
+			case 'left': {
+				await this.onKeyUp('left');
+				break;
+			}
+			case 'right': {
+				await this.onKeyUp('right');
+				break;
+			}
+			default:
+				break;
+		}
+
+		this.game.checkIfGameIsWon();
+		this.game.checkIfGameIsOver();
+	}
 
 	async handleKeyUp(event: KeyboardEvent) {
 		const key = event.key;

@@ -3,10 +3,23 @@
 	import { WinDialog } from '@/lib/components/2048';
 	import LooseDialog from '@/lib/components/2048/loose-dialog.svelte';
 	import { Button } from '@/lib/components/ui/button';
+	import type { SwipeDirection } from '@/lib/oop-2048-logics/KeyManager';
 	import { RotateCcw } from 'lucide-svelte';
 	import { onMount } from 'svelte';
+	import { MAX_CANVAS_SIZE } from '@/lib/oop-2048-logics/CanvasManager.svelte';
 
-	export const MAX_CANVAS_SIZE = 500;
+	// l'angoisse !!
+	if (typeof window !== 'undefined') {
+		import('swiped-events');
+	}
+
+	// ! La lib utiliser pour les swipe n'est pas typée
+	type CustomEvent = Event & {
+		detail: {
+			dir: SwipeDirection;
+		};
+	};
+
 	export const OFFSET_CANVAS_SIZE = 32;
 
 	const game = new Game({
@@ -33,6 +46,18 @@
 		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
 		await setCanvasSize();
 		await game.canvasManager.draw();
+	});
+
+	$effect(() => {
+		const handleSwipe = (event: Event) => {
+			const customEvent = event as CustomEvent;
+			game.keyManager.handleSwipe(customEvent.detail.dir);
+		};
+
+		document.addEventListener('swiped', handleSwipe);
+		return () => {
+			document.removeEventListener('swiped', handleSwipe);
+		};
 	});
 
 	$effect(() => {

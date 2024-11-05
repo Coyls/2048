@@ -40,6 +40,7 @@
 		"vitest": "^2.0.4"
 	},
 	"dependencies": {
-		"lucide-svelte": "^0.454.0"
+		"lucide-svelte": "^0.454.0",
+		"swiped-events": "^1.2.0"
 	}
 }
