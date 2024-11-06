@@ -87,7 +87,7 @@
 </script>
 
 <main
-	class="mx-auto flex min-h-svh max-w-[500px] -translate-y-12 flex-col items-center justify-center gap-4"
+	class="mx-auto flex min-h-svh max-w-[500px] -translate-y-6 flex-col items-center justify-center gap-4 sm:-translate-y-12"
 >
 	<h1 class="pb-4 text-6xl font-bold">2048</h1>
 	<div class="flex w-full flex-row items-center justify-between gap-4 px-4 md:px-0">
