@@ -30,6 +30,7 @@ export class KeyManager {
 
 		this.game.checkIfGameIsWon();
 		this.game.checkIfGameIsOver();
+		this.game.setHighScore();
 	}
 
 	async handleKeyUp(event: KeyboardEvent) {
@@ -58,6 +59,7 @@ export class KeyManager {
 
 		this.game.checkIfGameIsWon();
 		this.game.checkIfGameIsOver();
+		this.game.setHighScore();
 	}
 
 	private onKeyUp = async (direction: DirectionType) => {

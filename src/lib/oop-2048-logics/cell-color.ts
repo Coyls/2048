@@ -63,7 +63,9 @@ export const getCellColorViolet = (value: number): string => {
 	}
 };
 
-export const TEXT_COLOR_BOUJIE = '#ededed';
+export const getTextColorBougie = (value: number): string => {
+	return value <= 64 ? '#ededed' : '#333333';
+};
 
 export const getCellColorBougie = (value: number): string => {
 	switch (value) {

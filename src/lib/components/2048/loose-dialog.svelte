@@ -3,10 +3,12 @@
 
 	let {
 		open = $bindable(false),
-		onResetGame
+		onResetGame,
+		score
 	}: {
 		open: boolean;
 		onResetGame: () => Promise<void>;
+		score: number;
 	} = $props();
 </script>
 
@@ -14,7 +16,9 @@
 	<AlertDialog.Content class="border-primary">
 		<AlertDialog.Header>
 			<AlertDialog.Title>Perdu !</AlertDialog.Title>
-			<AlertDialog.Description>Vous avez perdu ! Vous pouvez recommencer.</AlertDialog.Description>
+			<AlertDialog.Description>
+				Votre score est de <strong>{score}</strong> ! Vous avez perdu ! Vous pouvez recommencer.
+			</AlertDialog.Description>
 		</AlertDialog.Header>
 		<AlertDialog.Footer>
 			<AlertDialog.Action
