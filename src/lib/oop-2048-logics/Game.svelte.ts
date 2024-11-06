@@ -19,9 +19,12 @@ export class Game {
 	// todo: move to config file (4, 4)
 	grid = $state(new Grid(4, 4));
 	score = $state(0);
+	highScore = $state(0);
 	isGameOver = $state(false);
 	isGameWon = $state(false);
 	isGameContinue = $state(false);
+
+	localStorage: Storage | null = null;
 
 	keyManager: KeyManager;
 	canvasManager: CanvasManager;
@@ -63,11 +66,34 @@ export class Game {
 		this.dataForAnimation.currentGrid = this.grid.clone();
 	}
 
+	initHighScoreLocalStorage(localStorage: Storage) {
+		this.localStorage = localStorage;
+
+		if (!this.localStorage.getItem('highScore')) {
+			this.localStorage.setItem('highScore', '0');
+		}
+	}
+
+	getHighScore() {
+		this.highScore = parseInt(this.localStorage!.getItem('highScore') ?? '0');
+	}
+
+	setHighScore() {
+		if (this.score > this.highScore) {
+			this.localStorage!.setItem('highScore', this.score.toString());
+		}
+	}
+
+	displayHighScore() {
+		return this.score > this.highScore ? this.score : this.highScore;
+	}
+
 	reset() {
 		this.resetGrid();
 		this.score = 0;
 		this.isGameOver = false;
 		this.isGameWon = false;
+		this.getHighScore();
 	}
 
 	continueGame() {

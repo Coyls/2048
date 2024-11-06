@@ -43,6 +43,8 @@
 	};
 
 	onMount(async () => {
+		game.initHighScoreLocalStorage(window.localStorage);
+		game.getHighScore();
 		game.canvasManager.context = game.canvasManager.canvas?.getContext('2d') ?? null;
 		await setCanvasSize();
 	});
@@ -87,8 +89,13 @@
 <main class="mx-auto flex min-h-svh max-w-[500px] flex-col items-center justify-center gap-4">
 	<h1 class="text-6xl font-bold">2048</h1>
 	<div class="flex w-full flex-row items-center justify-between gap-4 px-4 md:px-0">
-		<div class=" text-3xl">Score: <span class="font-bold">{game.score}</span></div>
-		<Button size="icon" onclick={resetGame} variant="ghost" class="px-0">
+		<div class="flex flex-col">
+			<div class=" text-3xl">Score: <span class="font-bold">{game.score}</span></div>
+			<div class=" text-3xl">
+				High Score: <span class="font-bold">{game.displayHighScore()}</span>
+			</div>
+		</div>
+		<Button class="self-end" size="icon" onclick={resetGame} variant="ghost">
 			<RotateCcw size={24} class="text-primary" />
 		</Button>
 	</div>
@@ -107,4 +114,4 @@
 {/if}
 
 <WinDialog onResetGame={resetGame} onContinueGame={game.continueGame} open={game.isGameWon} />
-<LooseDialog onResetGame={resetGame} open={game.isGameOver} />
+<LooseDialog score={game.score} onResetGame={resetGame} open={game.isGameOver} />
