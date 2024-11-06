@@ -86,12 +86,14 @@
 	});
 </script>
 
-<main class="mx-auto flex min-h-svh max-w-[500px] flex-col items-center justify-center gap-4">
-	<h1 class="text-6xl font-bold">2048</h1>
+<main
+	class="mx-auto flex min-h-svh max-w-[500px] -translate-y-12 flex-col items-center justify-center gap-4"
+>
+	<h1 class="pb-4 text-6xl font-bold">2048</h1>
 	<div class="flex w-full flex-row items-center justify-between gap-4 px-4 md:px-0">
 		<div class="flex flex-col">
-			<div class=" text-3xl">Score: <span class="font-bold">{game.score}</span></div>
-			<div class=" text-3xl">
+			<div class="text-xl sm:text-2xl">Score: <span class="font-bold">{game.score}</span></div>
+			<div class="text-xl sm:text-2xl">
 				High Score: <span class="font-bold">{game.displayHighScore()}</span>
 			</div>
 		</div>
